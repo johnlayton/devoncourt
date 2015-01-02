@@ -1,0 +1,71 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-component-page/core-component-page.html">
+<link rel="import" href="../leaflet-map/leaflet-import.html">
+
+<!--<script type="application/javascript" src="../../../public/components/moment/moment.js"></script>-->
+
+<!--
+
+##### Example
+
+	<lleaflet-opendap-control> </leaflet-opendap-control>
+	
+##### Example
+
+	<leaflet-opendap-control url="..." dim="...">
+	</leaflet-opendap-control>
+
+@element leaflet-opendap-control
+@blurb
+@status beta
+@homepage https://nhnb.github.io/leaflet-map/
+-->
+
+<polymer-element name="leaflet-opendap-control" attributes="url dim position">
+  <template>
+    <style>
+      div.inspect {
+        font: 10px sans-serif;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 10px;
+        border-style: solid;
+        border-color: #7b98bc;
+        padding: 2px;
+      }
+
+      div.inspect svg {
+        height: 300px;
+        width: 600px;
+      }
+
+      div.inspect svg .axis path,
+      div.inspect svg .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+
+      div.inspect svg .data path {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1px;
+      }
+
+    </style>
+
+    <core-xhr id="xhr"></core-xhr>
+
+    <div id="chart" class="inspect"></div>
+  </template>
+
+  <script src="../lodash/dist/lodash.js"></script>
+  <script src="../d3/d3.js"></script>
+  <script src="../moment/moment.js"></script>
+  <script src="../kettstreet/kettstreet-client.js"></script>
+
+  <script src="./devoncourt.js"></script>
+
+</polymer-element>
