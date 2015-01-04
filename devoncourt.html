@@ -21,7 +21,7 @@
 @homepage https://nhnb.github.io/leaflet-map/
 -->
 
-<polymer-element name="leaflet-opendap-control" attributes="url dim position">
+<polymer-element name="leaflet-opendap-control" attributes="url variable position height width">
   <template>
     <style>
       div.inspect {
@@ -34,11 +34,6 @@
         border-style: solid;
         border-color: #7b98bc;
         padding: 2px;
-      }
-
-      div.inspect svg {
-        height: 300px;
-        width: 600px;
       }
 
       div.inspect svg .axis path,

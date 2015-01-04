@@ -2,109 +2,109 @@
 
 L.Control.OpenDAP = L.Control.extend({
 
-  options: {},
+                                       options: {},
 
-  initialize: function (options) {
-    L.setOptions(this, options);
-  },
+                                       initialize: function (options) {
+                                         L.setOptions(this, options);
+                                       },
 
-  onAdd: function (map) {
-    var name = 'leaflet-control-opendap',
-      container = L.DomUtil.create('div', name + ' leaflet-bar');
+                                       onAdd: function (map) {
+                                         var name = 'leaflet-control-opendap',
+                                             container = L.DomUtil.create('div', name + ' leaflet-bar');
 
-    this._map = map;
-    this._svg = this._createSvg( 'inspect', this.options.getContainer() );
+                                         this._map = map;
+                                         this._svg = this._createSvg( 'inspect', this.options.chart );
 
-    map.on('mousemove', _.debounce( this._mouseMove.bind( this ), 200 ), this );
+                                         map.on('mousemove', _.debounce( this._mouseMove.bind( this ), 200 ), this );
 
-    return container;
-  },
+                                         return container;
+                                       },
 
-  onRemove: function (map) {
-  },
+                                       onRemove: function (map) {
+                                       },
 
-  _mouseMove : function(event) {
-    this.options.getData( event.latlng, function( data ) {
+                                       _mouseMove : function(event) {
+                                         this.options.getData( event.latlng, function( data ) {
 
-      var d = data;
+                                           var d = data;
 
-      var width = this.width;
-      var height = this.height;
+                                           var width = this.width;
+                                           var height = this.height;
 
-      var x = d3.time.scale()
-        .range( [0, width] );
+                                           var x = d3.time.scale()
+                                             .range( [0, width] );
 
-      var y = d3.scale.linear()
-        .range( [height, 0] );
+                                           var y = d3.scale.linear()
+                                             .range( [height, 0] );
 
-      var xAxis = d3.svg.axis()
-        .scale( x )
-        .orient( "bottom" );
+                                           var xAxis = d3.svg.axis()
+                                             .scale( x )
+                                             .orient( "bottom" );
 
-      var yAxis = d3.svg.axis()
-        .scale( y )
-        .orient( "left" );
+                                           var yAxis = d3.svg.axis()
+                                             .scale( y )
+                                             .orient( "left" );
 
-      var line = d3.svg.line()
-        .x( function ( d ) { return x( d.date ); } )
-        .y( function ( d ) { return y( d.value ); } );
+                                           var line = d3.svg.line()
+                                             .x( function ( d ) { return x( d.date ); } )
+                                             .y( function ( d ) { return y( d.value ); } );
 
-      x.domain( d3.extent( d, function ( d ) {
-        return d.date;
-      } ) );
-      y.domain( d3.extent( d, function ( d ) {
-        return d.value;
-      } ) );
+                                           x.domain( d3.extent( d, function ( d ) {
+                                             return d.date;
+                                           } ) );
+                                           y.domain( d3.extent( d, function ( d ) {
+                                             return d.value;
+                                           } ) );
 
-      var svg = this._svg;
+                                           var svg = this._svg;
 
-      svg.selectAll( "g" ).remove();
-      svg.append( "g" )
-        .attr( "class", "x axis" )
-        .attr( "transform", "translate(0," + height + ")" )
-        .call( xAxis );
+                                           svg.selectAll( "g" ).remove();
+                                           svg.append( "g" )
+                                             .attr( "class", "x axis" )
+                                             .attr( "transform", "translate(0," + height + ")" )
+                                             .call( xAxis );
 
-      svg.append( "g" )
-        .attr( "class", "y axis" )
-        .call( yAxis )
-        .append( "text" )
-        .attr( "transform", "rotate(-90)" )
-        .attr( "y", 6 )
-        .attr( "dy", ".71em" )
-        .style( "text-anchor", "end" );
+                                           svg.append( "g" )
+                                             .attr( "class", "y axis" )
+                                             .call( yAxis )
+                                             .append( "text" )
+                                             .attr( "transform", "rotate(-90)" )
+                                             .attr( "y", 6 )
+                                             .attr( "dy", ".71em" )
+                                             .style( "text-anchor", "end" );
 
-      svg.append( "g" )
-          .attr( "class", "data" )
-          .append( "path" )
-            .datum( d )
-            .attr( "class", "line" )
-            .attr( "d", line );
+                                           svg.append( "g" )
+                                             .attr( "class", "data" )
+                                             .append( "path" )
+                                             .datum( d )
+                                             .attr( "class", "line" )
+                                             .attr( "d", line );
 
-    }.bind( this ) );
-  },
+                                         }.bind( this ) );
+                                       },
 
-  _createSvg : function( className, container ) {
+                                       _createSvg : function( className, container ) {
 
-    var inspect = L.DomUtil.create('div', className, container);
+                                         var inspect = L.DomUtil.create('div', className, container);
 
-    var margin = this.margin = this.options.margin || {top : 20, right : 20, bottom : 30, left : 50},
-      width = this.width = ( this.options.width || 600 ) - margin.left - margin.right,
-      height = this.height = ( this.options.height || 300 ) - margin.top - margin.bottom;
+                                         var margin = this.margin = this.options.margin || {top : 20, right : 20, bottom : 30, left : 50},
+                                             width = this.width = ( this.options.width || 600 ) - margin.left - margin.right,
+                                             height = this.height = ( this.options.height || 300 ) - margin.top - margin.bottom;
 
 
-    var svg = this._svg = d3.select( inspect ).append( "svg" )
-      .attr( "width", width + margin.left + margin.right )
-      .attr( "height", height + margin.top + margin.bottom )
-      .append( "g" )
-      .attr( "transform", "translate(" + margin.left + "," + margin.top + ")" );
+                                         var svg = this._svg = d3.select( inspect ).append( "svg" )
+                                           .attr( "width", width + margin.left + margin.right )
+                                           .attr( "height", height + margin.top + margin.bottom )
+                                           .append( "g" )
+                                           .attr( "transform", "translate(" + margin.left + "," + margin.top + ")" );
 
-    return svg;
-  }
-});
+                                         return svg;
+                                       }
+                                     });
 
 L.Map.mergeOptions({
-  opendapControl: false
-});
+                     opendapControl: false
+                   });
 
 L.Map.addInitHook(function () {
   if (this.options.opendapControl) {
@@ -119,11 +119,8 @@ L.control.opendap = function (options) {
 
 
 Polymer( 'leaflet-opendap-control', {
-  position: "bottomleft",
 
-  url: "",
-
-  dim: "",
+  url: "", variable: "", position: "bottomright", height: 300, width: 500,
 
   request : function( url, callback ) {
     this.$.xhr.request( { url: url, responseType: 'arraybuffer', callback: function( buffer ) {
@@ -145,8 +142,8 @@ Polymer( 'leaflet-opendap-control', {
   },
 
   process: function( data ) {
-    var dim_data = this.findData( data[1], this.dim );
-    var values = _.flatten( this.findData( dim_data, this.dim ) );
+    var dim_data = this.findData( data[1], this.variable );
+    var values = _.flatten( this.findData( dim_data, this.variable ) );
     var dates = _.map( this.findData( dim_data, 'time' ), function ( val ) {
       return moment( val * 1000 ).toDate();
     } ) ;
@@ -171,16 +168,19 @@ Polymer( 'leaflet-opendap-control', {
       return i < latlng.lng
     } );
     var y2 = y1 + 1;
-    this.request( this.url + ".dods?" + this.dim + "[" + t1 + ":1:" + t2 + "][" + y2 + ":1:" + y2 + "][" + x2 + ":1:" + x2 + "]",
+    this.request( this.url + ".dods?" + this.variable + "[" + t1 + ":1:" + t2 + "][" + y2 + ":1:" + y2 + "][" + x2 + ":1:" + x2 + "]",
                   function( data ) { callback( this.process( data ) ); }.bind( this ) );
   },
 
   containerChanged: function () {
     if ( this.container ) {
+      //getContainer: function() { return this.$.chart; }.bind( this ),
       var control = L.control.opendap( {
-        getContainer: function() { return this.$.chart; }.bind( this ),
-        getData: this.request_data.bind( this )
-      } );
+                                         chart: this.$.chart,
+                                         height: this.height,
+                                         width: this.width,
+                                         getData: this.request_data.bind( this )
+                                       } );
       this.control = control;
       this.container.addControl( this.control );
     }
