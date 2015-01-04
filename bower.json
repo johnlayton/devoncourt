@@ -1,12 +1,12 @@
 {
-  "name": "devoncourt",
-  "version": "0.0.1",
-  "authors": [
+  "name"        : "devoncourt",
+  "version"     : "0.0.1",
+  "authors"     : [
     "john layton <johnstewartlayton@gmail.com>"
   ],
-  "license": "MIT",
-  "private": true,
-  "ignore": [
+  "license"     : "MIT",
+  "private"     : true,
+  "ignore"      : [
     "**/.*",
     "node_modules",
     "bower_components",
@@ -14,9 +14,9 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": ">=0.3.3",
-    "leaflet": "~0.7.3",
+    "polymer"    : ">=0.3.3",
+    "leaflet"    : "~0.7.3",
     "leaflet-map": "~0.3.1",
-    "kettstreet": "johnlayton/kettstreet#master"
+    "kettstreet" : "johnlayton/kettstreet"
   }
 }
