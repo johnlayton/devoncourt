@@ -2,7 +2,88 @@
 <link rel="import" href="../core-component-page/core-component-page.html">
 <link rel="import" href="../leaflet-map/leaflet-import.html">
 
-<!--<script type="application/javascript" src="../../../public/components/moment/moment.js"></script>-->
+<!--
+
+##### Example
+
+<lleaflet-opendap-control> </leaflet-opendap-control>
+
+##### Example
+
+<leaflet-opendap-layer url="..." dim="...">
+</leaflet-opendap-layer>
+
+@element leaflet-opendap-control
+@blurb
+@status beta
+@homepage https://nhnb.github.io/leaflet-map/
+-->
+
+<polymer-element name="leaflet-opendap-layer" attributes="url variable position height width">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+
+    <core-xhr id="xhr"></core-xhr>
+
+    <script id="fragment" type="x-shader/x-fragment">
+      precision mediump float;
+
+      varying vec4 vColor;
+
+      void main(void) {
+          gl_FragColor = vColor;
+      }
+    </script>
+
+    <script id="vertex" type="x-shader/x-vertex">
+      attribute vec3 aVertexPosition;
+      attribute vec4 aVertexColor;
+
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
+
+      varying vec4 vColor;
+
+      void main(void) {
+          gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+          vColor = aVertexColor;
+      }
+    </script>
+
+    <script id="points" type="x-shader/x-vertex">
+      attribute vec3 aVertexPosition;
+      attribute vec4 aVertexColor;
+
+      uniform mat4 mapMatrix;
+
+      varying vec4 vColor;
+
+      void main(void) {
+          gl_Position = mapMatrix * vec4(aVertexPosition, 1.0);
+          vColor = aVertexColor;
+          gl_PointSize = 4.0;
+      }
+    </script>
+
+  </template>
+
+  <script src="../lodash/dist/lodash.js"></script>
+  <script src="../d3/d3.js"></script>
+  <script src="../moment/moment.js"></script>
+  <script src="../gl-matrix/dist/gl-matrix.js"></script>
+
+  <script src="../kettstreet/kettstreet.js"></script>
+
+  <!--<script src="./webgl-heatmap.js"></script>-->
+  <script src="./webgl-overlay.js"></script>
+  <script src="./devoncourt.js"></script>
+  <script src="./lib/leaflet-opendap-layer.js"></script>
+
+</polymer-element>
 
 <!--
 
@@ -62,5 +143,6 @@
   <script src="../kettstreet/kettstreet.js"></script>
 
   <script src="./devoncourt.js"></script>
+  <script src="./lib/leaflet-opendap-control.js"></script>
 
 </polymer-element>

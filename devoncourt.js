@@ -1,195 +1,260 @@
 "use strict";
 
-L.Control.OpenDAP = L.Control.extend({
+L.Control.OpenDAP = L.Control.extend( {
 
-                                       options: {},
+  options: {},
 
-                                       initialize: function (options) {
-                                         L.setOptions(this, options);
-                                       },
+  initialize: function ( options ) {
+    L.setOptions( this, options );
+  },
 
-                                       onAdd: function (map) {
-                                         var name = 'leaflet-control-opendap',
-                                             container = L.DomUtil.create('div', name + ' leaflet-bar');
+  onAdd: function ( map ) {
+    var name = 'leaflet-control-opendap',
+      container = L.DomUtil.create( 'div', name + ' leaflet-bar' );
 
-                                         this._map = map;
-                                         this._svg = this._createSvg( 'inspect', this.options.chart );
+    this._map = map;
+    this._svg = this._createSvg( 'inspect', this.options.chart );
 
-                                         map.on('mousemove', _.debounce( this._mouseMove.bind( this ), 200 ), this );
+    map.on( 'mousemove', _.debounce( this._mouseMove.bind( this ), 200 ), this );
 
-                                         return container;
-                                       },
+    return container;
+  },
 
-                                       onRemove: function (map) {
-                                       },
+  onRemove: function ( map ) {
+  },
 
-                                       _mouseMove : function(event) {
-                                         this.options.getData( event.latlng, function( data ) {
+  _mouseMove: function ( event ) {
+    this.options.getData( event.latlng, function ( err, data ) {
 
-                                           var d = data;
+      var d = data;
 
-                                           var width = this.width;
-                                           var height = this.height;
+      var width = this.width;
+      var height = this.height;
 
-                                           var x = d3.time.scale()
-                                             .range( [0, width] );
+      var x = d3.time.scale()
+        .range( [0, width] );
 
-                                           var y = d3.scale.linear()
-                                             .range( [height, 0] );
+      var y = d3.scale.linear()
+        .range( [height, 0] );
 
-                                           var xAxis = d3.svg.axis()
-                                             .scale( x )
-                                             .orient( "bottom" );
+      var xAxis = d3.svg.axis()
+        .scale( x )
+        .orient( "bottom" );
 
-                                           var yAxis = d3.svg.axis()
-                                             .scale( y )
-                                             .orient( "left" );
+      var yAxis = d3.svg.axis()
+        .scale( y )
+        .orient( "left" );
 
-                                           var line = d3.svg.line()
-                                             .x( function ( d ) { return x( d.date ); } )
-                                             .y( function ( d ) { return y( d.value ); } );
+      var line = d3.svg.line()
+        .x( function ( d ) {
+              return x( d.date );
+            } )
+        .y( function ( d ) {
+              return y( d.value );
+            } );
 
-                                           x.domain( d3.extent( d, function ( d ) {
-                                             return d.date;
-                                           } ) );
-                                           y.domain( d3.extent( d, function ( d ) {
-                                             return d.value;
-                                           } ) );
+      x.domain( d3.extent( d, function ( d ) {
+        return d.date;
+      } ) );
+      y.domain( d3.extent( d, function ( d ) {
+        return d.value;
+      } ) );
 
-                                           var svg = this._svg;
+      var svg = this._svg;
 
-                                           svg.selectAll( "g" ).remove();
-                                           svg.append( "g" )
-                                             .attr( "class", "x axis" )
-                                             .attr( "transform", "translate(0," + height + ")" )
-                                             .call( xAxis );
+      svg.selectAll( "g" ).remove();
+      svg.append( "g" )
+        .attr( "class", "x axis" )
+        .attr( "transform", "translate(0," + height + ")" )
+        .call( xAxis );
 
-                                           svg.append( "g" )
-                                             .attr( "class", "y axis" )
-                                             .call( yAxis )
-                                             .append( "text" )
-                                             .attr( "transform", "rotate(-90)" )
-                                             .attr( "y", 6 )
-                                             .attr( "dy", ".71em" )
-                                             .style( "text-anchor", "end" );
+      svg.append( "g" )
+        .attr( "class", "y axis" )
+        .call( yAxis )
+        .append( "text" )
+        .attr( "transform", "rotate(-90)" )
+        .attr( "y", 6 )
+        .attr( "dy", ".71em" )
+        .style( "text-anchor", "end" );
 
-                                           svg.append( "g" )
-                                             .attr( "class", "data" )
-                                             .append( "path" )
-                                             .datum( d )
-                                             .attr( "class", "line" )
-                                             .attr( "d", line );
+      svg.append( "g" )
+        .attr( "class", "data" )
+        .append( "path" )
+        .datum( d )
+        .attr( "class", "line" )
+        .attr( "d", line );
 
-                                         }.bind( this ) );
-                                       },
+    }.bind( this ) );
+  },
 
-                                       _createSvg : function( className, container ) {
+  _createSvg: function ( className, container ) {
 
-                                         var inspect = L.DomUtil.create('div', className, container);
+    var inspect = L.DomUtil.create( 'div', className, container );
 
-                                         var margin = this.margin = this.options.margin || {top : 20, right : 20, bottom : 30, left : 50},
-                                             width = this.width = ( this.options.width || 600 ) - margin.left - margin.right,
-                                             height = this.height = ( this.options.height || 300 ) - margin.top - margin.bottom;
+    var margin = this.margin =
+                 this.options.margin ||
+                 {top: 20, right: 20, bottom: 30, left: 50},
+      width = this.width =
+              ( this.options.width || 600 ) - margin.left - margin.right,
+      height = this.height =
+               ( this.options.height || 300 ) - margin.top - margin.bottom;
 
+    var svg = this._svg = d3.select( inspect ).append( "svg" )
+      .attr( "width", width + margin.left + margin.right )
+      .attr( "height", height + margin.top + margin.bottom )
+      .append( "g" )
+      .attr( "transform", "translate(" + margin.left + "," + margin.top + ")" );
 
-                                         var svg = this._svg = d3.select( inspect ).append( "svg" )
-                                           .attr( "width", width + margin.left + margin.right )
-                                           .attr( "height", height + margin.top + margin.bottom )
-                                           .append( "g" )
-                                           .attr( "transform", "translate(" + margin.left + "," + margin.top + ")" );
-
-                                         return svg;
-                                       }
-                                     });
-
-L.Map.mergeOptions({
-                     opendapControl: false
-                   });
-
-L.Map.addInitHook(function () {
-  if (this.options.opendapControl) {
-    this.opendapControl = new L.Control.OpenDAP();
-    this.addControl(this.opendapControl);
+    return svg;
   }
-});
+} );
 
-L.control.opendap = function (options) {
-  return new L.Control.OpenDAP(options);
+L.Map.mergeOptions( {
+  opendapControl: false
+} );
+
+L.Map.addInitHook( function () {
+  if ( this.options.opendapControl ) {
+    this.opendapControl = new L.Control.OpenDAP();
+    this.addControl( this.opendapControl );
+  }
+} );
+
+L.control.opendap = function ( options ) {
+  return new L.Control.OpenDAP( options );
 };
 
+L.TileLayer.OpenDAP = L.Class.extend( {
 
-Polymer( 'leaflet-opendap-control', {
-
-  url: "", variable: "", position: "bottomright", height: 300, width: 500,
-
-  request : function( url, callback ) {
-    this.$.xhr.request( { url: url, responseType: 'arraybuffer', callback: function( buffer ) {
-      callback( jsdap( buffer ) );
-    } } );
+  options: {
+    opacity        : 1,
+    gradientTexture: false,
+    alphaRange     : 1
   },
 
-  created: function () {
+  initialize: function ( options ) {
+    this.data = [];
+    L.setOptions( this, options );
+  },
+
+  onAdd: function ( map ) {
+    this.map = map;
+    var mapsize = map.getSize();
+    var options = this.options;
+
+    var c = document.createElement( "canvas" );
+    c.id = 'webgl-leaflet-' + L.Util.stamp( this );
+    c.width = mapsize.x;
+    c.height = mapsize.y;
+    c.style.opacity = options.opacity;
+    c.style.position = 'absolute';
+
+    map.getPanes().overlayPane.appendChild( c );
+
+    this.options.getData( 0, map.getBounds(), function ( err, data ) {
+      var config = {
+        canvas         : c,
+        gradientTexture: options.gradientTexture,
+        fragment       : options.fragment,
+        vertex         : options.vertex,
+        alphaRange     : [0, options.alphaRange],
+        rows           : data.latitudes.length - 1,
+        cols           : data.longitudes.length - 1,
+        data           : data.data
+      };
+      this.data = data.data;
+      this.WebGLHeatMap = createOverlay( config );
+      this._plot();
+    }.bind( this ) );
+
+    this.canvas = c;
+
+    map.on( "move", this._plot, this );
+
+    /* hide layer on zoom, because it doesn't animate zoom */
+    map.on( "zoomstart", this._hide, this );
+    map.on( "zoomend", this._show, this );
 
   },
 
-  ready: function () {
-    this.request( this.url + '.dods?time,latitude,longitude',
-                  function( data ) { this.dapvar =  data; }.bind( this ) )
+  onRemove: function ( map ) {
+    map.getPanes().overlayPane.removeChild( this.canvas );
+    map.off( "move", this._plot, this );
+    map.off( "zoomstart", this._hide, this );
+    map.off( "zoomend", this._show, this );
   },
 
-  findData: function( data, name ) {
-    return _.find( data, function( i ) { return i.var.name == name } ).data;
+  _hide: function () {
+    this.canvas.style.display = 'none';
   },
 
-  process: function( data ) {
-    var dim_data = this.findData( data[1], this.variable );
-    var values = _.flatten( this.findData( dim_data, this.variable ) );
-    var dates = _.map( this.findData( dim_data, 'time' ), function ( val ) {
-      return moment( val * 1000 ).toDate();
-    } ) ;
-    var d = _.filter( _.map( _.zip( dates, values ), function ( arr ) {
-      return { date : arr[0], value : arr[1] }
-    } ), function ( a ) {
-      return parseInt( a.value ) > -32760;
-    } );
-    return d;
+  _show: function () {
+    this.canvas.style.display = 'block';
   },
 
-  request_data : function( latlng, callback ) {
-    var t1 = 0;
-    var t2 = _.findLastIndex( this.findData( this.dapvar[1], 'time' ).data, function ( i ) {
-      return true;
-    } );
-    var x1 = _.findLastIndex( this.findData( this.dapvar[1], 'latitude' ).data, function ( i ) {
-      return i < latlng.lat
-    } );
-    var x2 = x1 + 1;
-    var y1 = _.findLastIndex( this.findData( this.dapvar[1], 'longitude' ).data, function ( i ) {
-      return i < latlng.lng
-    } );
-    var y2 = y1 + 1;
-    this.request( this.url + ".dods?" + this.variable + "[" + t1 + ":1:" + t2 + "][" + y2 + ":1:" + y2 + "][" + x2 + ":1:" + x2 + "]",
-                  function( data ) { callback( this.process( data ) ); }.bind( this ) );
+  _clear: function () {
+    var heatmap = this.WebGLHeatMap;
+    heatmap.clear();
+    heatmap.display( this.map );
   },
 
-  containerChanged: function () {
-    if ( this.container ) {
-      //getContainer: function() { return this.$.chart; }.bind( this ),
-      var control = L.control.opendap( {
-                                         chart: this.$.chart,
-                                         height: this.height,
-                                         width: this.width,
-                                         getData: this.request_data.bind( this )
-                                       } );
-      this.control = control;
-      this.container.addControl( this.control );
+  _resizeRequest: undefined,
+
+  _plot: function () {
+    this.active = true;
+    var map = this.map;
+    if ( this._resizeRequest !== map._resizeRequest ) {
+      this.resize();
+      this._resizeRequest = map._resizeRequest;
+    }
+    var heatmap = this.WebGLHeatMap;
+    heatmap.clear();
+    L.DomUtil.setPosition( this.canvas,
+                           map.latLngToLayerPoint( map.getBounds().getNorthWest() ) );
+    var dataLen = this.data.length;
+    if ( dataLen ) {
+      for ( var i = 0; i < dataLen; i++ ) {
+        var dataVal = this.data[i],
+          latlng = new L.LatLng( dataVal[0], dataVal[1] ),
+          point = map.latLngToContainerPoint( latlng );
+
+        heatmap.addPoint( Math.floor( point.x ), Math.floor( point.y ), dataVal[2] );
+
+      }
+      heatmap.update( );
+      heatmap.display( map );
     }
   },
 
-  detached: function () {
-    if ( this.container && this.control ) {
-      this.container.removeControl( this.control );
-    }
+  resize: function () {
+    //helpful for maps that change sizes
+    var mapsize = this.map.getSize();
+    this.canvas.width = mapsize.x;
+    this.canvas.height = mapsize.y;
+
+    this.WebGLHeatMap.adjustSize();
+  },
+
+  addDataPoint: function ( lat, lon, value ) {
+    this.data.push( [lat, lon, value / 50] );
+  },
+
+  setData: function ( dataset ) {
+    this.data = dataset;
+  },
+
+  clearData: function () {
+    this.data = [];
+  },
+
+  update: function () {
+    this._plot();
   }
-
 } );
+
+L.layer = function ( options ) {
+};
+
+L.layer.opendap = function ( options ) {
+  return new L.TileLayer.OpenDAP( options );
+};
