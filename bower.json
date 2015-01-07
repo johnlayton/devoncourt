@@ -20,7 +20,6 @@
     "moment"     : "~2.8.4",
     "d3"         : "~3.5.2",
     "lodash"     : "~2.4.1",
-    "gl-matrix"  : "toji/gl-matrix",
     "kettstreet" : "johnlayton/kettstreet"
   }
 }

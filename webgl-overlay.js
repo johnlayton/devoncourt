@@ -33,7 +33,12 @@
         gl.viewportWidth = options.canvas.width;
         gl.viewportHeight = options.canvas.height;
 
-        pixelsToWebGLMatrix.set([2/options.canvas.width, 0, 0, 0, 0, -2/options.canvas.height, 0, 0, 0, 0, 0, 0, -1, 1, 0, 1]);
+        var w = 2/options.canvas.width;
+        var h = -2/options.canvas.height;
+        pixelsToWebGLMatrix.set([ w, 0, 0, 0,
+                                  0, h, 0, 0,
+                                  0, 0, 0, 0,
+                                 -1, 1, 0, 1]);
       }
       catch ( e ) {
       }
@@ -122,10 +127,6 @@
     //  gl.uniformMatrix4fv( shaderProgram.mvMatrixUniform, false, mvMatrix );
     //}
 
-    function setMatrixUniforms() {
-      gl.uniformMatrix4fv( shaderProgram.mapMatrixUniform, false, mapMatrix );
-    }
-
     var squareVertexPositionBuffer;
     var squareVertexColorBuffer;
 
@@ -163,35 +164,22 @@
       squareVertexColorBuffer.numItems = indicies.length;
     };
 
-    var drawScene = function( scale, offset ) {
+    var drawScene = function() {
       gl.viewport( 0, 0, gl.viewportWidth, gl.viewportHeight );
       gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
       mapMatrix.set(pixelsToWebGLMatrix);
 
-      //scaleMatrix(mapMatrix, scale, scale);
-      //translateMatrix(mapMatrix, -offset.x, -offset.y);
-
-      //debugger;
-
-      //mat4.perspective(pMatrix, (Math.PI / 2), gl.viewportWidth / gl.viewportHeight, 0.1, 10000.0 );
-
-      //mat4.identity(mvMatrix);
-      //mat4.translate(mvMatrix, mvMatrix, [-0.0, -0.0, -0.0]);
-
       gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexPositionBuffer );
-      gl.vertexAttribPointer( shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT,
-                              false, 0, 0 );
+      gl.vertexAttribPointer( shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0 );
 
       gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
-      gl.vertexAttribPointer( shaderProgram.vertexColorAttribute, squareVertexColorBuffer.itemSize, gl.FLOAT,
-                              false, 0, 0 );
+      gl.vertexAttribPointer( shaderProgram.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0 );
 
-      //debugger;
-
-      setMatrixUniforms();
-      //gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );
-      gl.drawArrays( gl.POINTS, 0, squareVertexPositionBuffer.numItems );
+      //setMatrixUniforms();
+      gl.uniformMatrix4fv( shaderProgram.mapMatrixUniform, false, mapMatrix );
+      gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );
+      //gl.drawArrays( gl.POINTS, 0, squareVertexPositionBuffer.numItems );
     };
 
     var rgb = function ( i ) {
@@ -208,7 +196,7 @@
        return [ 0.0, 0.0, 0.0, 1.0]
        */
     };
-
+/*
     function LatLongToPixelXY(latitude, longitude) {
       var pi_180 = Math.PI / 180.0;
       var pi_4 = Math.PI * 4;
@@ -241,7 +229,7 @@
       matrix[6] *= scaleY;
       matrix[7] *= scaleY;
     }
-
+*/
     var Overlay = function ( options ) {
       this.options = options;
       this.data = [];
@@ -266,24 +254,15 @@
       console.log( "update" );
     };
 
-    Overlay.prototype.adjustSize = function () {
-      console.log( "adjust-size" );
+    Overlay.prototype.resize = function () {
+      console.log( "resize" );
     };
 
     Overlay.prototype.display = function ( map ) {
       console.log( "display" );
       initBuffers( this.data, create_indices( this.options.rows,
                                               this.options.cols ) );
-
-      var bounds = map.getBounds();
-      var topLeft = new L.LatLng(bounds.getNorth(), bounds.getWest());
-      var offset = LatLongToPixelXY(topLeft.lat, topLeft.lng);
-
-      // -- Scale to current zoom
-      var scale = Math.pow(2, map.getZoom());
-
-
-      drawScene( scale, offset );
+      drawScene();
     };
 
     return Overlay;
