@@ -18,9 +18,11 @@
 <polymer-element name="leaflet-opendap-layer" attributes="url variable position height width">
   <template>
     <style>
-      /*:host {*/
-      /*display: none;*/
-      /*}*/
+      /*
+      :host {
+        display: none;
+      }
+      */
 
       .time-slider {
         position: absolute;
@@ -38,6 +40,7 @@
       }
 
       .threshold-slider {
+        display: none;
         position: absolute;
         bottom: 40px;
         right: 10%;
@@ -54,8 +57,6 @@
         writing-mode: bt-lr;
       }
     </style>
-
-    <core-xhr id="xhr"></core-xhr>
 
     <script id="fragment" type="x-shader/x-fragment">
       precision mediump float;
@@ -100,9 +101,12 @@
 
     </script>
 
-    <!--<input class="threshold-slider" type="range" step="1"/>-->
-    <input class="time-slider" type="range" step="1" height="50" width="150"/>
+    <core-xhr id="xhr"></core-xhr>
 
+    <input id="threshold" class="threshold-slider" type="range" step="1"/>
+    <input id="time" class="time-slider" type="range" step="1" height="50" width="150"/>
+
+    <canvas id="canvas" />
   </template>
 
   <script src="../lodash/dist/lodash.js"></script>
@@ -115,4 +119,10 @@
   <script src="./webgl-overlay.js"></script>
   <script src="leaflet-opendap-layer.js"></script>
 
+</polymer-element>
+
+<polymer-element name="leaflet-opendap-colors" attributes="">
+</polymer-element>
+
+<polymer-element name="leaflet-opendap-color" attributes="min max rgba">
 </polymer-element>
