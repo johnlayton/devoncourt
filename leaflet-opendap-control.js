@@ -9,15 +9,15 @@ L.Control.OpenDAP = L.Control.extend( {
   },
 
   onAdd: function ( map ) {
-    //var name = 'leaflet-control-opendap',
-    //  container = L.DomUtil.create( 'div', name + ' leaflet-bar' );
+    var name = 'leaflet-control-opendap',
+      container = L.DomUtil.create( 'div', name + ' leaflet-bar' );
 
     this._map = map;
     this._svg = this._createSvg( 'inspect', this.options.chart );
 
     map.on( 'mousemove', _.debounce( this._mouseMove.bind( this ), 200 ), this );
 
-    //return container;
+    return container;
   },
 
   onRemove: function ( map ) {
@@ -169,14 +169,14 @@ Polymer( 'leaflet-opendap-control', {
     if ( this.dapvar ) {
       var t1 = 0;
       var t2 = this.findData( this.dapvar[1], 'time' ).data.length - 1;
-      var x1 = _.findLastIndex( this.findData( this.dapvar[1], 'latitude' ).data, function ( i ) {
+      var y1 = _.findLastIndex( this.findData( this.dapvar[1], 'latitude' ).data, function ( i ) {
         return i < latlng.lat
       } );
-      var x2 = x1;
-      var y1 = _.findLastIndex( this.findData( this.dapvar[1], 'longitude' ).data, function ( i ) {
+      var y2 = y1;
+      var x1 = _.findLastIndex( this.findData( this.dapvar[1], 'longitude' ).data, function ( i ) {
         return i < latlng.lng
       } );
-      var y2 = y1;
+      var x2 = x1;
       var url = this.url + ".dods?" + this.variable + "[" + t1 + ":1:" + t2 + "][" + y1 + ":1:" + y2 + "][" + x1 + ":1:" + x2 + "]";
       this.request( url, function ( err, data ) { callback( err, this.process_data( data ) ); }.bind( this ) );
     }
