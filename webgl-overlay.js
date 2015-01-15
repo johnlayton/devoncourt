@@ -11,12 +11,12 @@
 }( this, function () {
 
   var themes = {
-    "jet"      : [{"index": 0, "rgb": [0, 0, 131, 0.8]},
-                  {"index": 0.125, "rgb": [0, 60, 170, 0.8]},
-                  {"index": 0.375, "rgb": [5, 255, 255, 0.8]},
-                  {"index": 0.625, "rgb": [255, 255, 0, 0.8]},
-                  {"index": 0.875, "rgb": [250, 0, 0, 0.8]},
-                  {"index": 1, "rgb": [128, 0, 0, 0.8]}],
+    "jet"      : [{"index": 0, "rgb": [0, 0, 131, 0.6]},
+                  {"index": 0.125, "rgb": [0, 60, 170, 0.6]},
+                  {"index": 0.375, "rgb": [5, 255, 255, 0.6]},
+                  {"index": 0.625, "rgb": [255, 255, 0, 0.6]},
+                  {"index": 0.875, "rgb": [250, 0, 0, 0.6]},
+                  {"index": 1, "rgb": [128, 0, 0, 0.6]}],
     "hsv"      : [{"index": 0, "rgb": [255, 0, 0]},
                   {"index": 0.169, "rgb": [253, 255, 2]},
                   {"index": 0.173, "rgb": [247, 255, 2]},
@@ -305,8 +305,8 @@
 
       //setMatrixUniforms();
       gl.uniformMatrix4fv( shaderProgram.mapMatrixUniform, false, mapMatrix );
-      //gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );
-      gl.drawArrays( gl.POINTS, 0, squareVertexPositionBuffer.numItems );
+      gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );
+      //gl.drawArrays( gl.POINTS, 0, squareVertexPositionBuffer.numItems );
     };
 
     var rgb = function ( i ) {
