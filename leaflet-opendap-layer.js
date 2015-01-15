@@ -77,23 +77,11 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     };
     this.options.kettstreet.dap( variable, query, function( err, resp ){
       var data = this.process_data( variable, resp );
-
-      //debugger;
-
       this.rows = data.rows;
       this.cols = data.cols;
       this.data = data.data;
       this._plot();
     }.bind( this ) );
-
-/*
-    this.options.getData( moment(), map.getBounds(), function ( err, data ) {
-      this.rows = data.rows;
-      this.cols = data.cols;
-      this.data = data.data;
-      this._plot();
-    }.bind( this ) );
-*/
 
     this.canvas = canvas;
 
@@ -133,9 +121,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
   },
 
   _rollTime: function(e) {
-    console.log( e.target.value );
-    console.log(  moment( e.target.value ) );
-
     var variable = this.options.variable;
     var query = {
       time     : {
@@ -148,38 +133,12 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     };
     this.options.kettstreet.dap( variable, query, function( err, resp ){
       var data = this.process_data( variable, resp );
-
-      //debugger;
-
       this.rows = data.rows;
       this.cols = data.cols;
       this.data = data.data;
       this._plot();
     }.bind( this ) );
-
-
-/*
-    this.options.getData( moment( parseInt( e.target.value ) ), this.map.getBounds(), function ( err, data ) {
-      this.rows = data.rows;
-      this.cols = data.cols;
-      this.data = data.data;
-      this._plot();
-    }.bind( this ) );
-*/
-
-/*
-    var dt = new Date( parseInt( e.target.value ) )
-    this._label.innerHTML = dt.toLocaleString();
-    for (var i = 0; i < this.s.length; i++) {
-      this._wmslayers[i].setParams({ time: dt.toISOString() });
-    }
-    for (var i = 0; i < this._tilelayers.length; i++) {
-      this._tilelayers[i].options['time'] = dt.toISOString();
-      this._tilelayers[i].redraw();
-    }
-*/
   },
-
 
   _hide: function () {
     this.canvas.style.display = 'none';
@@ -231,20 +190,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     this.overlay.resize();
   },
 
-  /*
-  addDataPoint: function ( lat, lon, value ) {
-    this.data.push( [lat, lon, value / 50] );
-  },
-
-  setData: function ( dataset ) {
-    this.data = dataset;
-  },
-
-  clearData: function () {
-    this.data = [];
-  },
-  */
-
   update: function () {
     this._plot();
   }
@@ -261,15 +206,6 @@ Polymer( 'leaflet-opendap-layer', {
 
   url : "", variable : "",
 
-  request : function ( url, callback ) {
-    var options = {
-      url: url, responseType: 'arraybuffer', callback: function ( buffer ) {
-        callback( undefined, buffer );
-      }
-    };
-    this.$.xhr.request( options );
-  },
-
   provider: function( xhr ) {
     return function( url, callback ) {
       var options = {
@@ -284,18 +220,8 @@ Polymer( 'leaflet-opendap-layer', {
   created: function () {
   },
 
-/*
-  ready: function () {
-    debugger;
-    this.request( this.url + '.dods?time,latitude,longitude', function ( err, data ) {
-      this.dapvar = data;
-    }.bind( this ) )
-  },
-*/
-
   containerChanged: function () {
     if ( this.container ) {
-
       var config = {
         url     : this.url,
         provider: this.provider( this.$.xhr )
