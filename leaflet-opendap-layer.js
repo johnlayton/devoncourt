@@ -4,13 +4,44 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
   options: {
     opacity        : 1
-    //gradientTexture: false,
-    //alphaRange     : 1
   },
 
   initialize: function ( options ) {
     this.data = [];
     L.setOptions( this, options );
+  },
+
+  findData: function( data, name ) {
+    return _.find( data, function( i ) { return i.das.name == name } ).data;
+  },
+
+  process_data: function( variable, data ) {
+
+    var all_data = this.findData( data, variable );
+    var var_data = this.findData( all_data, variable );
+
+    var data = [];
+    //var times = this.findData( all_data, 'time' );
+    var latitudes = this.findData( all_data, 'latitude' );
+    var longitudes = this.findData( all_data, 'longitude' );
+
+    //for ( var time = 0; time < var_data.length ; time++ ) {
+      var d1 = var_data[0];
+      for ( var lat = 0; lat < d1.length - 1; lat++ ) {
+        var d2 = d1[lat];
+        for ( var lng = 0; lng < d2.length - 1 ; lng++ ) {
+          var _lat = latitudes[lat];
+          var _lng = longitudes[lng];
+          data.push( [ _lat, _lng, d2[lng] ] );
+        }
+      }
+    //}
+
+    return {
+      data: data,
+      rows: latitudes.length,
+      cols: longitudes.length
+    };
   },
 
   onAdd: function ( map ) {
@@ -34,20 +65,47 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     };
     this.overlay = createOverlay( config );
 
-    this.options.getData( moment(), map.getBounds(), function ( err, data ) {
+    var variable = this.options.variable;
+    var query = {
+      time     : {
+        min: moment().unix(),
+        max: moment().unix(),
+        step: 1
+      },
+      latitude : { step: 1 },
+      longitude: { step: 1 }
+    };
+    this.options.kettstreet.dap( variable, query, function( err, resp ){
+      var data = this.process_data( variable, resp );
+
+      //debugger;
+
       this.rows = data.rows;
       this.cols = data.cols;
       this.data = data.data;
       this._plot();
     }.bind( this ) );
 
+/*
+    this.options.getData( moment(), map.getBounds(), function ( err, data ) {
+      this.rows = data.rows;
+      this.cols = data.cols;
+      this.data = data.data;
+      this._plot();
+    }.bind( this ) );
+*/
+
     this.canvas = canvas;
 
     var slider = options.time.slider;
     var stop = L.DomEvent.stopPropagation;
-    slider.step = 60 * 60 * 1000;
-    slider.min = this.options.time.min.format('x');
-    slider.max = this.options.time.max.format('x');
+    this.options.kettstreet.dim( "time", function( err, data ) {
+      slider.step = 60 * 60;
+      var times = this.findData( data, 'time' );
+
+      slider.min = times[0];//this.options.time.min.format('x');
+      slider.max = times[times.length - 1];//this.options.time.max.format('x');
+    }.bind( this ) );
 
     L.DomEvent
       .on(slider, 'click',     stop)
@@ -76,15 +134,39 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
   _rollTime: function(e) {
     console.log( e.target.value );
-
     console.log(  moment( e.target.value ) );
 
+    var variable = this.options.variable;
+    var query = {
+      time     : {
+        min: moment( parseInt( e.target.value ) * 1000 ).unix(),
+        max: moment( parseInt( e.target.value ) * 1000 ).unix(),
+        step: 1
+      },
+      latitude : { step: 2 },
+      longitude: { step: 2 }
+    };
+    this.options.kettstreet.dap( variable, query, function( err, resp ){
+      var data = this.process_data( variable, resp );
+
+      //debugger;
+
+      this.rows = data.rows;
+      this.cols = data.cols;
+      this.data = data.data;
+      this._plot();
+    }.bind( this ) );
+
+
+/*
     this.options.getData( moment( parseInt( e.target.value ) ), this.map.getBounds(), function ( err, data ) {
       this.rows = data.rows;
       this.cols = data.cols;
       this.data = data.data;
       this._plot();
     }.bind( this ) );
+*/
+
 /*
     var dt = new Date( parseInt( e.target.value ) )
     this._label.innerHTML = dt.toLocaleString();
@@ -128,15 +210,12 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     var dataLen = this.data.length;
     if ( dataLen ) {
       var data = [];
-
       for ( var i = 0; i < dataLen; i++ ) {
         var dataVal = this.data[i],
           latlng = new L.LatLng( dataVal[0], dataVal[1] ),
           point = map.latLngToContainerPoint( latlng );
-
         //overlay.addPoint( Math.floor( point.x ), Math.floor( point.y ), dataVal[2] );
         data.push( [ Math.floor( point.x ), Math.floor( point.y ), dataVal[2] ] );
-
       }
       overlay.update( );
       overlay.display( data, this.rows, this.cols );
@@ -185,14 +264,21 @@ Polymer( 'leaflet-opendap-layer', {
   request : function ( url, callback ) {
     var options = {
       url: url, responseType: 'arraybuffer', callback: function ( buffer ) {
-        callback( undefined, jsdap( buffer ) );
+        callback( undefined, buffer );
       }
     };
     this.$.xhr.request( options );
   },
 
-  findData: function( data, name ) {
-    return _.find( data, function( i ) { return i.var.name == name } ).data;
+  provider: function( xhr ) {
+    return function( url, callback ) {
+      var options = {
+        url: url, responseType: 'arraybuffer', callback: function ( buffer ) {
+          callback( undefined, buffer );
+        }
+      };
+      xhr.request( options );
+    };
   },
 
   created: function () {
@@ -207,86 +293,25 @@ Polymer( 'leaflet-opendap-layer', {
   },
 */
 
-  process_data: function( data ) {
-    var all_data = this.findData( data[1], this.variable );
-    var var_data = this.findData( all_data, this.variable );
-
-    var data = [];
-    //var times = this.findData( all_data, 'time' );
-    var latitudes = this.findData( all_data, 'latitude' );
-    var longitudes = this.findData( all_data, 'longitude' );
-
-    //debugger;
-
-    for ( var time = 0; time < var_data.length ; time++ ) {
-      var d1 = var_data[time];
-      for ( var lat = 0; lat < d1.length - 1; lat++ ) {
-        var d2 = d1[lat];
-        for ( var lng = 0; lng < d2.length - 1 ; lng++ ) {
-          var _lat = latitudes[lat];
-          var _lng = longitudes[lng];
-          data.push( [ _lat, _lng, d2[lng] ] );
-        }
-      }
-    }
-
-    return {
-      data: data,
-      rows: latitudes.length,
-      cols: longitudes.length
-    };
-  },
-
-  request_data : function( time, bounds, callback ) {
-
-    console.log( time );
-
-    if ( this.dapvar ) {
-      var times = this.findData( this.dapvar[1], 'time' ).data;
-      var lngs = this.findData( this.dapvar[1], 'longitude' ).data;
-      var lats = this.findData( this.dapvar[1], 'latitude' ).data;
-      var t1 = Math.max( _.findLastIndex( times, function ( i ) {
-        return moment( i * 1000 ).isBefore( time );
-      } ), 0 );
-      var t2 = t1;
-      var x1 = Math.max( _.findLastIndex( lngs, function ( i ) {
-        return i < bounds.getWest()
-      } ), 0 );
-      var x2 = Math.min( _.findLastIndex( lngs, function ( i ) {
-        return i < bounds.getEast()
-      } ), lngs.length - 1);
-      var y1 = Math.max( _.findLastIndex( lats, function ( i ) {
-        return i < bounds.getSouth()
-      } ), 0 );
-      var y2 = Math.min( _.findLastIndex( lats, function ( i ) {
-        return i < bounds.getNorth()
-      } ), lats.length - 1);
-      var url = this.url + ".dods?" + this.variable + "[" + t1 + ":1:" + t2 + "][" + y1 + ":2:" + y2 + "][" + x1 + ":2:" + x2 + "]";
-
-      console.log( url );
-
-      this.request( url, function ( err, data ) { callback( err, this.process_data( data ) ); }.bind( this ) );
-    }
-  },
-
   containerChanged: function () {
     if ( this.container ) {
-      this.request( this.url + '.dods?time,latitude,longitude', function ( err, data ) {
-        this.dapvar = data;
-        var options = {
-          canvas  : this.$.canvas,
-          time : {
-            slider : this.$.time,
-            min : moment( this.findData( data[1], 'time' ).data[0] * 1000 ),
-            max : moment( this.findData( data[1], 'time' ).data[162] * 1000 )
-          },
-          fragment: this.$.fragment,
-          vertex  : this.$.points,
-          getData : this.request_data.bind( this )
-        };
-        this.layer = new L.layer.opendap( options );
-        this.container.addLayer( this.layer );
-      }.bind( this ) )
+
+      var config = {
+        url     : this.url,
+        provider: this.provider( this.$.xhr )
+      };
+      var options = {
+        variable  : this.variable,
+        canvas    : this.$.canvas,
+        time      : {
+          slider: this.$.time
+        },
+        fragment  : this.$.fragment,
+        vertex    : this.$.points,
+        kettstreet: kettstreet( config )
+      };
+      this.layer = new L.layer.opendap( options );
+      this.container.addLayer( this.layer );
     }
   },
 
