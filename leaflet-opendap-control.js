@@ -23,10 +23,33 @@ L.Control.OpenDAP = L.Control.extend( {
   onRemove: function ( map ) {
   },
 
-  _mouseMove: function ( event ) {
-    this.options.getData( event.latlng, function ( err, data ) {
+  findData: function( data, name ) {
+    return _.find( data, function( i ) { return i.das.name == name } ).data;
+  },
 
-      var d = data;
+  process_data : function ( data ) {
+    var dim_data = this.findData( data, this.options.variable );
+    var values = _.flatten( this.findData( dim_data, this.options.variable ) );
+    var dates = _.map( this.findData( dim_data, 'time' ), function ( val ) {
+      return moment( val * 1000 ).toDate();
+    } );
+    return _.filter( _.map( _.zip( dates, values ), function ( arr ) {
+      return {date : arr[0], value : arr[1]}
+    } ), function ( a ) {
+      return parseInt( a.value ) > -32760;
+    } );
+  },
+
+  _mouseMove: function ( event ) {
+    var variable = this.options.variable;
+    var query = {
+      time     : {step: 1},
+      latitude : {min: event.latlng.lat, max: event.latlng.lat, step: 1},
+      longitude: {min: event.latlng.lng, max: event.latlng.lng, step: 1}
+    };
+
+    this.options.kettstreet.dap( variable, query, function ( err, data) {
+      var d = this.process_data( data );
 
       var width = this.width;
       var height = this.height;
@@ -128,70 +151,35 @@ Polymer( 'leaflet-opendap-control', {
 
   url : "", variable : "", position : "bottomright", height : 300, width : 500,
 
-  request : function ( url, callback ) {
-    var options = {
-      url : url, responseType : 'arraybuffer', callback : function ( buffer ) {
-        callback( undefined, jsdap( buffer ) );
-      }
+  provider: function( xhr ) {
+    return function( url, callback ) {
+      var options = {
+        url: url, responseType: 'arraybuffer', callback: function ( buffer ) {
+          callback( undefined, buffer );
+        }
+      };
+      xhr.request( options );
     };
-    this.$.xhr.request( options );
   },
 
   created : function () {
   },
 
-  ready : function () {
-    this.request( this.url + '.dods?time,latitude,longitude', function ( err, data ) {
-      this.dapvar = data;
-    }.bind( this ) )
-  },
-
-  findData : function ( data, name ) {
-    return _.find( data, function ( i ) {
-      return i.var.name == name
-    } ).data;
-  },
-
-  process_data : function ( data ) {
-    var dim_data = this.findData( data[1], this.variable );
-    var values = _.flatten( this.findData( dim_data, this.variable ) );
-    var dates = _.map( this.findData( dim_data, 'time' ), function ( val ) {
-      return moment( val * 1000 ).toDate();
-    } );
-    return _.filter( _.map( _.zip( dates, values ), function ( arr ) {
-      return {date : arr[0], value : arr[1]}
-    } ), function ( a ) {
-      return parseInt( a.value ) > -32760;
-    } );
-  },
-
-  request_data : function ( latlng, callback ) {
-    if ( this.dapvar ) {
-      var t1 = 0;
-      var t2 = this.findData( this.dapvar[1], 'time' ).data.length - 1;
-      var y1 = _.findLastIndex( this.findData( this.dapvar[1], 'latitude' ).data, function ( i ) {
-        return i < latlng.lat
-      } );
-      var y2 = y1;
-      var x1 = _.findLastIndex( this.findData( this.dapvar[1], 'longitude' ).data, function ( i ) {
-        return i < latlng.lng
-      } );
-      var x2 = x1;
-      var url = this.url + ".dods?" + this.variable + "[" + t1 + ":1:" + t2 + "][" + y1 + ":1:" + y2 + "][" + x1 + ":1:" + x2 + "]";
-      this.request( url, function ( err, data ) { callback( err, this.process_data( data ) ); }.bind( this ) );
-    }
-  },
-
   containerChanged : function () {
     if ( this.container ) {
       var config = {
-        chart  : this.$.chart,
-        height : this.height,
-        width  : this.width,
-        getData: this.request_data.bind( this )
+        url      : this.url,
+        provider : this.provider( this.$.xhr )
       };
-      var control = L.control.opendap( config );
-      this.control = control;
+      var options = {
+        chart    : this.$.chart,
+        height   : this.height,
+        width    : this.width,
+        variable : this.variable,
+        kettstreet : kettstreet( config )
+      };
+
+      this.control = L.control.opendap( options );
       this.container.addControl( this.control );
     }
   },

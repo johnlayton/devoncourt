@@ -7,8 +7,8 @@ L.TileLayer.OpenDAP = L.Class.extend( {
   },
 
   initialize: function ( options ) {
-    this.data = [];
     L.setOptions( this, options );
+    this.data = [];
   },
 
   findData: function( data, name ) {
@@ -90,9 +90,8 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     this.options.kettstreet.dim( "time", function( err, data ) {
       slider.step = 60 * 60;
       var times = this.findData( data, 'time' );
-
-      slider.min = times[0];//this.options.time.min.format('x');
-      slider.max = times[times.length - 1];//this.options.time.max.format('x');
+      slider.min = times[0];
+      slider.max = times[times.length - 1];
     }.bind( this ) );
 
     L.DomEvent
