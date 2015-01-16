@@ -72,8 +72,8 @@ L.TileLayer.OpenDAP = L.Class.extend( {
         max: moment().unix(),
         step: 1
       },
-      latitude : { step: 1 },
-      longitude: { step: 1 }
+      latitude : { step: 2 },
+      longitude: { step: 2 }
     };
     this.options.kettstreet.dap( variable, query, function( err, resp ){
       var data = this.process_data( variable, resp );
