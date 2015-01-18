@@ -130,7 +130,7 @@
     var squareVertexPositionBuffer;
     var squareVertexColorBuffer;
 
-    var initBuffers = function( data, indicies ) {
+    var initBuffers = function( options, data, indicies ) {
       squareVertexPositionBuffer = squareVertexPositionBuffer || gl.createBuffer();
       gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexPositionBuffer );
       var vertices = [];
@@ -155,7 +155,7 @@
       gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
       colors = [];
       for ( var i = 0, len = indicies.length; i < len; i++ ) {
-        var col = rgb( data[indicies[i]][2] );
+        var col = rgb( options, data[indicies[i]][2] );
         colors.push( col[0] / 255 );
         colors.push( col[1] / 255 );
         colors.push( col[2] / 255 );
@@ -187,8 +187,8 @@
       //gl.drawArrays( gl.POINTS, 0, squareVertexPositionBuffer.numItems );
     };
 
-    var rgb = function ( i ) {
-      if ( i > 0 ) {
+    var rgb = function ( options, i ) {
+      if ( i > ( options.min || 0 ) ) {
         var res = _.findLast( themes('jet'), function( ent ) {
           return ent.index < ( i / 40 );
         } ).rgb || [0.0, 0.0, 0.0, 0.0];
@@ -262,8 +262,11 @@
       //this.data.push( [x, y, val] );
     };
 
-    Overlay.prototype.update = function () {
+    Overlay.prototype.update = function ( options ) {
       //console.log( "update" );
+      if ( options && options.min ) {
+        this.options.min = options.min;
+      }
     };
 
     Overlay.prototype.resize = function () {
@@ -275,7 +278,7 @@
       //initBuffers( this.data, create_indices( this.options.rows,
       //                                        this.options.cols ) );
 
-      initBuffers( data, create_indices( rows, cols ) );
+      initBuffers( this.options, data, create_indices( rows, cols ) );
       drawScene();
     };
 

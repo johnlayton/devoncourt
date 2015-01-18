@@ -26,7 +26,7 @@
 
       .time-slider {
         position: absolute;
-        bottom: 40px;
+        bottom: 10px;
         right: 10%;
         background: rgba(255, 255, 255, 0.4);
         border-radius: 10px;
@@ -40,21 +40,20 @@
       }
 
       .threshold-slider {
-        display: none;
         position: absolute;
-        bottom: 40px;
-        right: 10%;
+        top: 10px;
+        right: 10px;
         background: rgba(255, 255, 255, 0.4);
         border-radius: 10px;
         border-style: solid;
         border-color: #7b98bc;
         padding: 2px;
         font-size: 20px;
-        height: 80px;
-        width: 30%;
+        height: 80%;
+        width: 30px;
         line-height: 26px;
         -webkit-appearance: slider-vertical;
-        writing-mode: bt-lr;
+        /*writing-mode: bt-lr;*/
       }
     </style>
 
@@ -103,7 +102,7 @@
 
     <core-xhr id="xhr"></core-xhr>
 
-    <input id="threshold" class="threshold-slider" type="range" step="1"/>
+    <input id="threshold" class="threshold-slider" type="range" step="1" width="50" height="150"/>
     <input id="time" class="time-slider" type="range" step="1" height="50" width="150"/>
 
     <canvas id="canvas" />

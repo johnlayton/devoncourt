@@ -65,50 +65,20 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     };
     this.overlay = createOverlay( config );
 
-    var variable = this.options.variable;
-    var query = {
-      time     : {
-        min: moment().unix(),
-        max: moment().unix(),
-        step: 1
-      },
-      latitude : { step: 2 },
-      longitude: { step: 2 }
-    };
-    this.options.kettstreet.dap( variable, query, function( err, resp ){
-      var data = this.process_data( variable, resp );
-      this.rows = data.rows;
-      this.cols = data.cols;
-      this.data = data.data;
-      this._plot();
-    }.bind( this ) );
-
     this.canvas = canvas;
 
-    var slider = options.time.slider;
-    var stop = L.DomEvent.stopPropagation;
-    this.options.kettstreet.dim( "time", function( err, data ) {
-      slider.step = 60 * 60;
-      var times = this.findData( data, 'time' );
-      slider.min = times[0];
-      slider.max = times[times.length - 1];
-    }.bind( this ) );
+    this._createTimeSlider();
+    this._createThresholdSlider();
 
-    L.DomEvent
-      .on(slider, 'click',     stop)
-      .on(slider, 'mousedown', stop)
-      .on(slider, 'dblclick',  stop)
-      .on(slider, 'change',    L.DomEvent.preventDefault)
-      .on(slider, 'input',    this._rollTime, this)
-      .on(slider, 'change',    this._rollTime, this);
-
-    this._slider = slider;
+    this._currentTime = moment();
+    this._currentThreshold = 0;
 
     map.on( "move", this._plot, this );
 
     /* hide layer on zoom, because it doesn't animate zoom */
     map.on( "zoomstart", this._hide, this );
     map.on( "zoomend", this._show, this );
+    map.on( "resize", this._plot, this );
 
   },
 
@@ -119,12 +89,72 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     map.off( "zoomend", this._show, this );
   },
 
+  _createTimeSlider: function() {
+    var slider = this.options.time.slider;
+    var stop = L.DomEvent.stopPropagation;
+    this.options.kettstreet.dim( "time", function( err, data ) {
+      slider.step = 60 * 60;
+      var times = this.findData( data, 'time' );
+      slider.min = times[0];
+      slider.max = times[times.length - 1];
+      slider.value = parseInt( moment().unix() );
+      this._rollTime( { target: { value: parseInt( moment().unix() ) } } )
+    }.bind( this ) );
+
+    L.DomEvent
+      .on(slider, 'click',     stop)
+      .on(slider, 'mousedown', stop)
+      .on(slider, 'dblclick',  stop)
+      .on(slider, 'change',    L.DomEvent.preventDefault)
+      .on(slider, 'input',    this._rollTime, this)
+      .on(slider, 'change',    this._rollTime, this);
+
+    return slider;
+  },
+
+  _createThresholdSlider: function() {
+    var slider = this.options.threshold.slider;
+    var stop = L.DomEvent.stopPropagation;
+
+    this.options.kettstreet.das( function( err, data ) {
+      slider.step = 1;
+      slider.min = parseInt( data[this.options.variable].attributes['valid_min'] );
+      slider.max = parseInt( data[this.options.variable].attributes['valid_max'] );
+      slider.value = slider.min;
+    }.bind( this ) );
+
+    //this.options.kettstreet.dim( "time", function( err, data ) {
+    //  slider.step = 60 * 60;
+    //  var times = this.findData( data, 'time' );
+    //  slider.min = times[0];
+    //  slider.max = times[times.length - 1];
+    //  slider.value = parseInt( moment().unix() );
+    //  this._rollTime( { target: { value: parseInt( moment().unix() ) } } )
+    //}.bind( this ) );
+
+    L.DomEvent
+      .on(slider, 'click',     stop)
+      .on(slider, 'mousedown', stop)
+      .on(slider, 'dblclick',  stop)
+      .on(slider, 'change',    L.DomEvent.preventDefault)
+      .on(slider, 'input',    this._updateThreshold, this)
+      .on(slider, 'change',    this._updateThreshold, this);
+
+    return slider;
+  },
+
+  _updateThreshold: function( e ) {
+    this._currentThreshold = e.target.value;
+    this._plot()
+  },
+
   _rollTime: function(e) {
+    this._currentTime = moment( parseInt( e.target.value ) * 1000 );
     var variable = this.options.variable;
     var query = {
       time     : {
-        min: moment( parseInt( e.target.value ) * 1000 ).unix(),
-        max: moment( parseInt( e.target.value ) * 1000 ).unix(),
+        min: this._currentTime.unix(),
+        max: this._currentTime.unix(),
         step: 1
       },
       latitude : { step: 2 },
@@ -175,7 +205,7 @@ L.TileLayer.OpenDAP = L.Class.extend( {
         //overlay.addPoint( Math.floor( point.x ), Math.floor( point.y ), dataVal[2] );
         data.push( [ Math.floor( point.x ), Math.floor( point.y ), dataVal[2] ] );
       }
-      overlay.update( );
+      overlay.update( { min: this._currentThreshold } );
       overlay.display( data, this.rows, this.cols );
     }
   },
@@ -230,6 +260,9 @@ Polymer( 'leaflet-opendap-layer', {
         canvas    : this.$.canvas,
         time      : {
           slider: this.$.time
+        },
+        threshold : {
+          slider: this.$.threshold
         },
         fragment  : this.$.fragment,
         vertex    : this.$.points,
