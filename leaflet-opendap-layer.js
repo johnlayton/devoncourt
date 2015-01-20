@@ -73,12 +73,12 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     this._currentTime = moment();
     this._currentThreshold = 0;
 
-    map.on( "move", this._plot, this );
+    map.on( "move", this._update, this );
 
     /* hide layer on zoom, because it doesn't animate zoom */
     map.on( "zoomstart", this._hide, this );
     map.on( "zoomend", this._show, this );
-    map.on( "resize", this._plot, this );
+    map.on( "resize", this._update, this );
 
   },
 
@@ -106,7 +106,7 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       .on(slider, 'mousedown', stop)
       .on(slider, 'dblclick',  stop)
       .on(slider, 'change',    L.DomEvent.preventDefault)
-      .on(slider, 'input',    this._rollTime, this)
+      .on(slider, 'input',     this._rollTime, this)
       .on(slider, 'change',    this._rollTime, this);
 
     return slider;
@@ -137,7 +137,7 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       .on(slider, 'mousedown', stop)
       .on(slider, 'dblclick',  stop)
       .on(slider, 'change',    L.DomEvent.preventDefault)
-      .on(slider, 'input',    this._updateThreshold, this)
+      .on(slider, 'input',     this._updateThreshold, this)
       .on(slider, 'change',    this._updateThreshold, this);
 
     return slider;
@@ -145,11 +145,19 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
   _updateThreshold: function( e ) {
     this._currentThreshold = e.target.value;
-    this._plot()
+    this._plot();
   },
 
   _rollTime: function(e) {
     this._currentTime = moment( parseInt( e.target.value ) * 1000 );
+    this._update();
+  },
+
+  _update: function() {
+    var sth = this.map.getBounds().getSouth(),
+        nth = this.map.getBounds().getNorth(),
+        est = this.map.getBounds().getEast(),
+        wst = this.map.getBounds().getWest();
     var variable = this.options.variable;
     var query = {
       time     : {
@@ -157,8 +165,16 @@ L.TileLayer.OpenDAP = L.Class.extend( {
         max: this._currentTime.unix(),
         step: 1
       },
-      latitude : { step: 2 },
-      longitude: { step: 2 }
+      latitude : {
+        min : sth,
+        max : nth,
+        step: 2
+      },
+      longitude: {
+        min : wst,
+        max : est,
+        step: 2
+      }
     };
     this.options.kettstreet.dap( variable, query, function( err, resp ){
       var data = this.process_data( variable, resp );

@@ -1,6 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-component-page/core-component-page.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<!--<link rel="import" href="../core-component-page/core-component-page.html">-->
 <link rel="import" href="../leaflet-map/leaflet-import.html">
+<link rel="import" href="../paper-interval-slider/paper-interval-slider.html">
 
 <!--
 
@@ -55,6 +57,28 @@
         -webkit-appearance: slider-vertical;
         /*writing-mode: bt-lr;*/
       }
+
+
+      /*body {*/
+        /*font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;*/
+        /*margin: 0;*/
+        /*padding: 24px;*/
+      /*}*/
+
+      #ratings {
+        position: absolute;
+        z-index: 999;
+        top: 60px;
+        left: 10px;
+        height: 25px;
+        width: 250px;
+        background: rgba(255, 255, 255, 0.4);
+        /*border-radius: 10px;*/
+        /*border-style: solid;*/
+        /*border-color: #7b98bc;*/
+        padding: 2px;
+        font-size: 20px;
+      }
     </style>
 
     <script id="fragment" type="x-shader/x-fragment">
@@ -102,11 +126,22 @@
 
     <core-xhr id="xhr"></core-xhr>
 
-    <input id="threshold" class="threshold-slider" type="range" step="1" width="50" height="150"/>
+    <input id="threshold" class="threshold-slider" type="range" step="1" width="50" height="150" multiple value="0,25" />
     <input id="time" class="time-slider" type="range" step="1" height="50" width="150"/>
+
+    <!--<paper-interval-slider id="ratings" pin snaps max="10" step="1" value="5"></paper-interval-slider>-->
 
     <canvas id="canvas" />
   </template>
+
+  <script>
+
+    var ratings = document.querySelector('#ratings');
+    ratings.addEventListener('core-change', function() {
+      document.querySelector('#ratingsLabel').textContent = ratings.value;
+    });
+
+  </script>
 
   <script src="../lodash/dist/lodash.js"></script>
   <script src="../d3/d3.js"></script>

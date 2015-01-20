@@ -162,8 +162,6 @@
         colors.push( col[3] );
       }
 
-      //debugger;
-
       gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
       squareVertexColorBuffer.itemSize = 4;
       squareVertexColorBuffer.numItems = indicies.length;

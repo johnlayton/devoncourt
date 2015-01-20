@@ -1,25 +1,30 @@
 {
-  "name"        : "devoncourt",
-  "version"     : "0.0.3",
-  "authors"     : [
+  "name"         : "devoncourt",
+  "version"      : "0.0.3",
+  "authors"      : [
     "john layton <johnstewartlayton@gmail.com>"
   ],
-  "license"     : "MIT",
-  "private"     : true,
-  "ignore"      : [
+  "license"      : "MIT",
+  "private"      : true,
+  "ignore"       : [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
     "tests"
   ],
-  "dependencies": {
-    "polymer"    : ">=0.3.3",
-    "leaflet"    : "~0.7.3",
-    "leaflet-map": "~0.3.1",
-    "moment"     : "~2.8.4",
-    "d3"         : "~3.5.2",
-    "lodash"     : "~2.4.1",
-    "kettstreet" : "johnlayton/kettstreet"
+  "dependencies" : {
+    "polymer"               : ">=0.3.3",
+    "leaflet"               : "~0.7.3",
+    "leaflet-map"           : "~0.3.1",
+    "moment"                : "~2.8.4",
+    "d3"                    : "~3.5.2",
+    "lodash"                : "~2.4.1",
+    "paper-interval-slider" : "0.0.3",
+    "core-ajax"             : "polymer/core-ajax",
+    "polymer"               : "polymer/polymer",
+    "paper-input"           : "polymer/paper-input",
+    "paper-progress"        : "polymer/paper-progress",
+    "kettstreet"            : "johnlayton/kettstreet"
   }
 }
