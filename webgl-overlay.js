@@ -272,10 +272,6 @@
     };
 
     Overlay.prototype.display = function ( data, rows, cols) {
-      //console.log( "display" );
-      //initBuffers( this.data, create_indices( this.options.rows,
-      //                                        this.options.cols ) );
-
       initBuffers( this.options, data, create_indices( rows, cols ) );
       drawScene();
     };
