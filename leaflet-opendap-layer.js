@@ -223,22 +223,8 @@ L.TileLayer.OpenDAP = L.Class.extend( {
         var dataVal = this.data[i],
           latlng = new L.LatLng( dataVal[0], dataVal[1] ),
           point = map.latLngToContainerPoint( latlng );
-        //overlay.addPoint( Math.floor( point.x ), Math.floor( point.y ), dataVal[2] );
-
-        if ( ( i %  this.cols ) == 0 ) {
-          console.log( "----------" );
-        }
-
-        console.log( dataVal[0] + "," + dataVal[1] + " -> " +  latlng + " -> " + point + " = " + dataVal[2]) ;
-
-
         data.push( [ Math.floor( point.x ), Math.floor( point.y ), dataVal[2] ] );
       }
-      console.log("################");
-      console.log( data );
-      console.log( this.rows );
-      console.log( this.cols );
-      console.log("################");
       overlay.update( { min: this._currentThreshold } );
       overlay.display( data, this.rows, this.cols );
     }
