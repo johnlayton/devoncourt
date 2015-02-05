@@ -20,25 +20,30 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     var all_data = this.findData( data, variable );
     var var_data = this.findData( all_data, variable );
 
-    var data = [];
+    var result = [];
     //var times = this.findData( all_data, 'time' );
     var latitudes = this.findData( all_data, 'latitude' );
     var longitudes = this.findData( all_data, 'longitude' );
 
-    //for ( var time = 0; time < var_data.length ; time++ ) {
+    for ( var time = 0; time < var_data.length ; time++ ) {
       var d1 = var_data[0];
-      for ( var lat = 0; lat < d1.length - 1; lat++ ) {
+      for ( var lat = 0; lat < d1.length; lat++ ) {
         var d2 = d1[lat];
-        for ( var lng = 0; lng < d2.length - 1 ; lng++ ) {
+        for ( var lng = 0; lng < d2.length; lng++ ) {
           var _lat = latitudes[lat];
           var _lng = longitudes[lng];
-          data.push( [ _lat, _lng, d2[lng] ] );
+          result.push( [ _lat, _lng, d2[lng] ] );
         }
       }
-    //}
+    }
+
+    //console.log( "Actual = " + result.length );
+    //console.log( "Latitudes = " + latitudes.length );
+    //console.log( "Longitudes = " + longitudes.length );
+    //console.log( "Expected = " + ( latitudes.length * longitudes.length ) );
 
     return {
-      data: data,
+      data: result,
       rows: latitudes.length,
       cols: longitudes.length
     };
@@ -168,12 +173,12 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       latitude : {
         min : sth,
         max : nth,
-        step: 2
+        step: 3
       },
       longitude: {
         min : wst,
         max : est,
-        step: 2
+        step: 3
       }
     };
     this.options.kettstreet.dap( variable, query, function( err, resp ){
@@ -219,8 +224,21 @@ L.TileLayer.OpenDAP = L.Class.extend( {
           latlng = new L.LatLng( dataVal[0], dataVal[1] ),
           point = map.latLngToContainerPoint( latlng );
         //overlay.addPoint( Math.floor( point.x ), Math.floor( point.y ), dataVal[2] );
+
+        if ( ( i %  this.cols ) == 0 ) {
+          console.log( "----------" );
+        }
+
+        console.log( dataVal[0] + "," + dataVal[1] + " -> " +  latlng + " -> " + point + " = " + dataVal[2]) ;
+
+
         data.push( [ Math.floor( point.x ), Math.floor( point.y ), dataVal[2] ] );
       }
+      console.log("################");
+      console.log( data );
+      console.log( this.rows );
+      console.log( this.cols );
+      console.log("################");
       overlay.update( { min: this._currentThreshold } );
       overlay.display( data, this.rows, this.cols );
     }

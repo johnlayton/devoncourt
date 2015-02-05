@@ -16,13 +16,13 @@
 
     var create_indices = function( rows, columns ) {
       var indices = [], index = 0;
-      for ( var row = 0; row < ( rows - 2 ); ++row ) {
-        indices[index++] = row * ( columns - 1 );
-        for ( var column = 0; column < ( columns - 1 ); ++column ) {
-          indices[index++] = row * ( columns - 1 ) + column;
-          indices[index++] = (row + 1) * ( columns - 1 ) + column;
+      for ( var row = 0; row < ( rows - 1 ); ++row ) {
+        indices[index++] = row * ( columns );
+        for ( var column = 0; column < ( columns ); ++column ) {
+          indices[index++] = row * ( columns ) + column;
+          indices[index++] = (row + 1) * ( columns ) + column;
         }
-        indices[index++] = (row + 1) * ( columns - 1 ) + (columns - 2);
+        indices[index++] = (row + 1) * ( columns ) + (columns - 1);
       }
       return indices;
     };
