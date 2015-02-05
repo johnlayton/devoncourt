@@ -111,8 +111,8 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       .on(slider, 'mousedown', stop)
       .on(slider, 'dblclick',  stop)
       .on(slider, 'change',    L.DomEvent.preventDefault)
-      .on(slider, 'input',     this._rollTime, this)
-      .on(slider, 'change',    this._rollTime, this);
+      .on(slider, 'input',     this._rollTime, this);
+      //.on(slider, 'change',    this._rollTime, this);
 
     return slider;
   },
@@ -142,8 +142,8 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       .on(slider, 'mousedown', stop)
       .on(slider, 'dblclick',  stop)
       .on(slider, 'change',    L.DomEvent.preventDefault)
-      .on(slider, 'input',     this._updateThreshold, this)
-      .on(slider, 'change',    this._updateThreshold, this);
+      .on(slider, 'input',     this._updateThreshold, this);
+      //.on(slider, 'change',    this._updateThreshold, this);
 
     return slider;
   },
