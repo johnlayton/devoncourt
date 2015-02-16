@@ -3,7 +3,7 @@
 L.TileLayer.OpenDAP = L.Class.extend( {
 
   options: {
-    opacity        : 1
+    opacity : 1
   },
 
   initialize: function ( options ) {
@@ -36,12 +36,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
         }
       }
     }
-
-    //console.log( "Actual = " + result.length );
-    //console.log( "Latitudes = " + latitudes.length );
-    //console.log( "Longitudes = " + longitudes.length );
-    //console.log( "Expected = " + ( latitudes.length * longitudes.length ) );
-
     return {
       data: result,
       rows: latitudes.length,
@@ -110,8 +104,9 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       .on(slider, 'click',     stop)
       .on(slider, 'mousedown', stop)
       .on(slider, 'dblclick',  stop)
-      .on(slider, 'change',    L.DomEvent.preventDefault)
-      .on(slider, 'input',     this._rollTime, this);
+      //.on(slider, 'change',    L.DomEvent.preventDefault)
+      .on(slider, 'immediate-value-change',    this._rollTime, this);
+      //.on(slider, 'input',     this._rollTime, this);
       //.on(slider, 'change',    this._rollTime, this);
 
     return slider;
@@ -127,15 +122,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       slider.max = parseInt( data[this.options.variable].attributes['valid_max'] );
       slider.value = slider.min;
     }.bind( this ) );
-
-    //this.options.kettstreet.dim( "time", function( err, data ) {
-    //  slider.step = 60 * 60;
-    //  var times = this.findData( data, 'time' );
-    //  slider.min = times[0];
-    //  slider.max = times[times.length - 1];
-    //  slider.value = parseInt( moment().unix() );
-    //  this._rollTime( { target: { value: parseInt( moment().unix() ) } } )
-    //}.bind( this ) );
 
     L.DomEvent
       .on(slider, 'click',     stop)
@@ -154,6 +140,14 @@ L.TileLayer.OpenDAP = L.Class.extend( {
   },
 
   _rollTime: function(e) {
+    //this._currentTime = moment( parseInt( e.target.value ) * 1000 );
+    this._currentTime = moment( parseInt( this.options.time.slider.immediateValue ) * 1000 );
+    //console.log( moment( parseInt( this.options.time.slider.immediateValue ) * 1000 ) );
+    //console.log( this._currentTime );
+    this._update();
+  },
+
+  _rollTime_2 : function ( e ) {
     this._currentTime = moment( parseInt( e.target.value ) * 1000 );
     this._update();
   },
@@ -173,12 +167,12 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       latitude : {
         min : sth,
         max : nth,
-        step: 3
+        step: 2
       },
       longitude: {
         min : wst,
         max : est,
-        step: 3
+        step: 2
       }
     };
     this.options.kettstreet.dap( variable, query, function( err, resp ){
@@ -255,10 +249,34 @@ Polymer( 'leaflet-opendap-layer', {
 
   url : "", variable : "",
 
+/*
+  toMoment: {
+    toDOM: function(value) {
+      console.log( "toDOM = " + value );
+
+      console.log( this.seconds );
+      return moment( value ).format("ddd, hA");
+    },
+    toModel: function(value) {
+      console.log( "toModel = " + value );
+      console.log( this.seconds );
+      return moment( value ).format("ddd, hA");
+    }
+  },
+*/
+  toMoment: function(value) {
+    //console.log( "toDOM = " + value );
+    //console.log( this.seconds );
+    //console.log( moment( parseInt( value ) * 1000 ) );
+    return moment( parseInt( value ) * 1000 ).format("ddd, hA");
+    //return value;
+  },
+
   provider: function( xhr ) {
     return function( url, callback ) {
       var options = {
-        url: url, responseType: 'arraybuffer', callback: function ( buffer ) {
+        url: url, responseType: 'arraybuffer',
+        callback: function ( buffer ) {
           callback( undefined, buffer );
         }
       };

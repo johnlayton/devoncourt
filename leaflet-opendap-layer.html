@@ -2,6 +2,8 @@
 <link rel="import" href="../core-ajax/core-ajax.html">
 <!--<link rel="import" href="../core-component-page/core-component-page.html">-->
 <link rel="import" href="../leaflet-map/leaflet-import.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-slider/paper-slider.html">
 <link rel="import" href="../paper-interval-slider/paper-interval-slider.html">
 
 <!--
@@ -17,7 +19,7 @@
 
 @element leaflet-opendap-layer
 -->
-<polymer-element name="leaflet-opendap-layer" attributes="url variable position height width">
+<polymer-element name="leaflet-opendap-layer" attributes="url variable position height width seconds">
   <template>
     <style>
       /*
@@ -65,13 +67,30 @@
         /*padding: 24px;*/
       /*}*/
 
-      #ratings {
+      #label {
         position: absolute;
         z-index: 999;
-        top: 60px;
-        left: 10px;
+        bottom: 40px;
+        right: 10%;
         height: 25px;
-        width: 250px;
+        width: 400px;
+        background: rgba(255, 255, 255, 0.4);
+        /*border-radius: 10px;*/
+        /*border-style: solid;*/
+        /*border-color: #7b98bc;*/
+        padding: 2px;
+        font-size: 20px;
+      }
+
+      #time {
+        position: absolute;
+        z-index: 999;
+        bottom: 20px;
+        right: 10%;
+        height: 25px;
+        width: 80%;
+        /*width: 25px;*/
+        /*height: 80%;*/
         background: rgba(255, 255, 255, 0.4);
         /*border-radius: 10px;*/
         /*border-style: solid;*/
@@ -127,19 +146,20 @@
     <core-xhr id="xhr"></core-xhr>
 
     <input id="threshold" class="threshold-slider" type="range" step="1" width="50" height="150" multiple value="0,25" />
-    <input id="time" class="time-slider" type="range" step="1" height="50" width="150"/>
+    <!--<input id="time" class="time-slider" type="range" step="1" height="50" width="150"/>-->
 
-    <!--<paper-interval-slider id="ratings" pin snaps max="10" step="1" value="5"></paper-interval-slider>-->
+    <!--<paper-slider id="time" pin snaps immediateValue="{{seconds | toMoment}}" ></paper-slider>-->
+    <!--<paper-slider id="time" value="{{seconds | toMoment}}"></paper-slider>-->
+
+    <!--<paper-input  id="label" label="Date" floatingLabel value="{{seconds | toMoment}}"></paper-input>-->
+    <div>
+      <paper-slider id="time"></paper-slider>
+    </div>
 
     <canvas id="canvas" />
   </template>
 
   <script>
-
-    var ratings = document.querySelector('#ratings');
-    ratings.addEventListener('core-change', function() {
-      document.querySelector('#ratingsLabel').textContent = ratings.value;
-    });
 
   </script>
 
