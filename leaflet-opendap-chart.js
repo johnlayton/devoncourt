@@ -9,7 +9,7 @@ L.Control.OpenDAP = L.Control.extend( {
   },
 
   onAdd: function ( map ) {
-    var name = 'leaflet-control-opendap',
+    var name = 'leaflet-control-chart',
       container = L.DomUtil.create( 'div', name + ' leaflet-bar' );
 
     this._map = map;
@@ -133,13 +133,13 @@ L.Control.OpenDAP = L.Control.extend( {
 } );
 
 L.Map.mergeOptions( {
-  opendapControl: false
+  opendapChart: false
 } );
 
 L.Map.addInitHook( function () {
-  if ( this.options.opendapControl ) {
-    this.opendapControl = new L.Control.OpenDAP();
-    this.addControl( this.opendapControl );
+  if ( this.options.opendapChart ) {
+    this.opendapChart = new L.Control.OpenDAP();
+    this.addControl( this.opendapChart );
   }
 } );
 
@@ -147,7 +147,7 @@ L.control.opendap = function ( options ) {
   return new L.Control.OpenDAP( options );
 };
 
-Polymer( 'leaflet-opendap-control', {
+Polymer( 'leaflet-opendap-chart', {
 
   url : "", variable : "", position : "bottomright", height : 300, width : 500,
 
