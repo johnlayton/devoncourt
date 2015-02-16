@@ -1,2 +1,4 @@
 .idea
 devoncourt.iml
+node_modules
+bower_components
