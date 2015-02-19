@@ -21,6 +21,7 @@
     "d3"                    : "~3.5.2",
     "lodash"                : "~2.4.1",
     "paper-interval-slider" : "0.0.3",
+    "leaflet-hash"          : "*",
     "core-ajax"             : "polymer/core-ajax",
     "polymer"               : "polymer/polymer",
     "paper-input"           : "polymer/paper-input",

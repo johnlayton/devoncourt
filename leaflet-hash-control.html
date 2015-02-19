@@ -1,0 +1,46 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<link rel="import" href="../leaflet-map/leaflet-import.html">
+
+<!--
+
+##### Example
+
+	<lleaflet-hash-control> </leaflet-hash-control>
+
+##### Example
+
+	<leaflet-hash-control>
+	</leaflet-hash-control>
+
+@element leaflet-opendap-control
+-->
+<polymer-element name="leaflet-hash-control" >
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+s  </template>
+
+  <script src="../leaflet-hash/leaflet-hash.js"></script>
+
+  <script>
+    "user strict"
+
+    Polymer( 'leaflet-hash-control', {
+
+      created : function () {
+      },
+
+
+      containerChanged : function () {
+        if ( this.container ) {
+          new L.Hash( this.container );
+        }
+      }
+
+    } );
+  </script>
+</polymer-element>
