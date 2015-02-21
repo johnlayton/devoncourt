@@ -26,6 +26,7 @@
     "polymer"               : "polymer/polymer",
     "paper-input"           : "polymer/paper-input",
     "paper-progress"        : "polymer/paper-progress",
+    "paper-shadow"          : "polymer/paper-shadow",
     "kettstreet"            : "johnlayton/kettstreet"
   }
 }
