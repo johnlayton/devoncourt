@@ -4,6 +4,8 @@
 <link rel="import" href="../leaflet-map/leaflet-import.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-slider/paper-slider.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-shadow/paper-shadow.html">
 <link rel="import" href="../paper-interval-slider/paper-interval-slider.html">
 
 <!--
@@ -19,7 +21,7 @@
 
 @element leaflet-opendap-layer
 -->
-<polymer-element name="leaflet-opendap-layer" attributes="url variable position height width seconds">
+<polymer-element name="leaflet-opendap-layer" attributes="url variable position height width legend date">
   <template>
     <style>
       /*
@@ -28,6 +30,7 @@
       }
       */
 
+/*
       .time-slider {
         position: absolute;
         bottom: 10px;
@@ -57,8 +60,11 @@
         width: 30px;
         line-height: 26px;
         -webkit-appearance: slider-vertical;
-        /*writing-mode: bt-lr;*/
+        */
+/*writing-mode: bt-lr;*//*
+
       }
+*/
 
 
       /*body {*/
@@ -66,7 +72,7 @@
         /*margin: 0;*/
         /*padding: 24px;*/
       /*}*/
-
+/*
       #label {
         position: absolute;
         z-index: 999;
@@ -75,28 +81,52 @@
         height: 25px;
         width: 400px;
         background: rgba(255, 255, 255, 0.4);
-        /*border-radius: 10px;*/
-        /*border-style: solid;*/
-        /*border-color: #7b98bc;*/
+        *//*border-radius: 10px;*//*
+        *//*border-style: solid;*//*
+        *//*border-color: #7b98bc;*//*
         padding: 2px;
         font-size: 20px;
       }
 
-      #time {
+      #time_slider {
         position: absolute;
         z-index: 999;
         bottom: 20px;
         right: 10%;
         height: 25px;
-        width: 80%;
-        /*width: 25px;*/
-        /*height: 80%;*/
+        *//*width: 80%;*//*
+        *//*width: 25px;*//*
+        *//*height: 80%;*//*
         background: rgba(255, 255, 255, 0.4);
-        /*border-radius: 10px;*/
-        /*border-style: solid;*/
-        /*border-color: #7b98bc;*/
+        *//*border-radius: 10px;*//*
+        *//*border-style: solid;*//*
+        *//*border-color: #7b98bc;*//*
         padding: 2px;
         font-size: 20px;
+      }
+
+      #time_label {
+        position: absolute;
+        z-index: 999;
+        bottom: 50px;
+        right: 10%;
+        height: 25px;
+        *//*width: 80%;*//*
+        *//*width: 25px;*//*
+        *//*height: 80%;*//*
+        background: rgba(255, 255, 255, 0.4);
+        *//*border-radius: 10px;*//*
+        *//*border-style: solid;*//*
+        *//*border-color: #7b98bc;*//*
+        padding: 2px;
+        font-size: 20px;
+      }*/
+
+      #time {
+        position: absolute;
+        z-index: 999;
+        bottom: 50px;
+        height: 25px;
       }
     </style>
 
@@ -146,15 +176,11 @@
     <core-xhr id="xhr"></core-xhr>
 
     <input id="threshold" class="threshold-slider" type="range" step="1" width="50" height="150" multiple value="0,25" />
-    <!--<input id="time" class="time-slider" type="range" step="1" height="50" width="150"/>-->
 
-    <!--<paper-slider id="time" pin snaps immediateValue="{{seconds | toMoment}}" ></paper-slider>-->
-    <!--<paper-slider id="time" value="{{seconds | toMoment}}"></paper-slider>-->
-
-    <!--<paper-input  id="label" label="Date" floatingLabel value="{{seconds | toMoment}}"></paper-input>-->
-    <div>
-      <paper-slider id="time"></paper-slider>
-    </div>
+    <paper-shadow id="time" z="3" class="span-shadow" vertical>
+      <paper-button id="time_label" raised>{{ date | toMoment }}</paper-button>
+      <paper-slider id="time_slider" immediateValue="{{ date }}"></paper-slider>
+    </paper-shadow>
 
     <canvas id="canvas" />
   </template>
@@ -173,4 +199,27 @@
   <script src="./webgl-overlay.js"></script>
   <script src="leaflet-opendap-layer.js"></script>
 
+</polymer-element>
+
+<polymer-element name="leaflet-opendap-colors" attributes="">
+  <template>
+    <style>
+      /*
+      :host {
+        display: none;
+      }
+      */
+    </style>
+  </template>
+
+  <script>
+    "user strict"
+
+    Polymer( 'leaflet-opendap-colors', {
+
+      created : function () {
+      }
+
+    } );
+  </script>
 </polymer-element>

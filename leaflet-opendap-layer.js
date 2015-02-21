@@ -167,12 +167,12 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       latitude : {
         min : sth,
         max : nth,
-        step: 2
+        step: 1
       },
       longitude: {
         min : wst,
         max : est,
-        step: 2
+        step: 1
       }
     };
     this.options.kettstreet.dap( variable, query, function( err, resp ){
@@ -247,7 +247,7 @@ L.layer.opendap = function ( options ) {
 
 Polymer( 'leaflet-opendap-layer', {
 
-  url : "", variable : "",
+  //url : "", variable : "",
 
 /*
   toMoment: {
@@ -268,7 +268,7 @@ Polymer( 'leaflet-opendap-layer', {
     //console.log( "toDOM = " + value );
     //console.log( this.seconds );
     //console.log( moment( parseInt( value ) * 1000 ) );
-    return moment( parseInt( value ) * 1000 ).format("ddd, hA");
+    return moment( parseInt( value ) * 1000 ).format("HH:mm DD-MM-YYYY");
     //return value;
   },
 
@@ -297,7 +297,7 @@ Polymer( 'leaflet-opendap-layer', {
         variable  : this.variable,
         canvas    : this.$.canvas,
         time      : {
-          slider: this.$.time
+          slider: this.$.time_slider
         },
         threshold : {
           slider: this.$.threshold

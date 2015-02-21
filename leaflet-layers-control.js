@@ -39,13 +39,12 @@ Polymer( 'leaflet-layers-control', {
   },
 
   addLayer: function( layer ) {
-    for (var i = 0; i < this.children.length; i++) {
+    for ( var i = 0; i < this.children.length; i++ ) {
       if ( layer.url.match( this.children[i].url ) ) {
         this.container.addLayer( layer );
         this.control.addOverlay( layer, this.children[i].name );
       }
     }
   }
-
 
 } );
