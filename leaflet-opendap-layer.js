@@ -247,7 +247,7 @@ L.layer.opendap = function ( options ) {
 
 Polymer( 'leaflet-opendap-layer', {
 
-  //url : "", variable : "",
+  url : "", variable : "", date : moment().unix(),
 
 /*
   toMoment: {
@@ -268,7 +268,7 @@ Polymer( 'leaflet-opendap-layer', {
     //console.log( "toDOM = " + value );
     //console.log( this.seconds );
     //console.log( moment( parseInt( value ) * 1000 ) );
-    return moment( parseInt( value ) * 1000 ).format("HH:mm DD-MM-YYYY");
+    return moment( parseInt( value ) * 1000 ).format("HH:mm DD-MMM-YYYY");
     //return value;
   },
 
@@ -297,7 +297,7 @@ Polymer( 'leaflet-opendap-layer', {
         variable  : this.variable,
         canvas    : this.$.canvas,
         time      : {
-          slider: this.$.time_slider
+          slider: this.$.slider
         },
         threshold : {
           slider: this.$.threshold
