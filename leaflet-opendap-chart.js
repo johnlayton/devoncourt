@@ -174,7 +174,7 @@ Polymer( 'leaflet-opendap-chart', {
       var config = {
         url      : this.url,
         provider : this.provider( this.$.xhr ),
-        storage  : this.storage
+        cache    : this.storage
       };
       var options = {
         chart    : this.$.chart,

@@ -280,7 +280,7 @@ Polymer( 'leaflet-opendap-layer', {
       var config = {
         url       : this.url,
         provider  : this.provider( this.$.xhr ),
-        storage   : this.storage
+        cache     : this.storage
       };
       var options = {
         variable  : this.variable,
