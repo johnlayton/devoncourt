@@ -151,6 +151,10 @@ Polymer( 'leaflet-opendap-chart', {
 
   url : "", variable : "", position : "bottomright", height : 300, width : 500,
 
+  observe: {
+    'container storage': 'containerChanged'
+  },
+
   provider: function( xhr ) {
     return function( url, callback ) {
       var options = {
@@ -166,10 +170,11 @@ Polymer( 'leaflet-opendap-chart', {
   },
 
   containerChanged : function () {
-    if ( this.container ) {
+    if ( this.container && this.storage ) {
       var config = {
         url      : this.url,
-        provider : this.provider( this.$.xhr )
+        provider : this.provider( this.$.xhr ),
+        storage  : this.storage
       };
       var options = {
         chart    : this.$.chart,

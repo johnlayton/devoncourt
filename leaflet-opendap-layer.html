@@ -8,6 +8,8 @@
 <link rel="import" href="../paper-shadow/paper-shadow.html">
 <link rel="import" href="../paper-interval-slider/paper-interval-slider.html">
 
+<link rel="import" href="../leighcourt/web-storage.html">
+
 <!--
 
 ##### Example
@@ -21,7 +23,7 @@
 
 @element leaflet-opendap-layer
 -->
-<polymer-element name="leaflet-opendap-layer" attributes="url variable position height width legend date">
+<polymer-element name="leaflet-opendap-layer" attributes="url variable theme legend date">
   <template>
     <style>
       /*
@@ -115,6 +117,8 @@
     </paper-shadow>
 
     <canvas id="canvas" />
+
+    <web-storage storage="{{storage}}" group="OpenDap" resource="{{variable}}"></web-storage>
   </template>
 
   <script>

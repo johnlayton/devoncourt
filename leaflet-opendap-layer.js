@@ -249,27 +249,18 @@ Polymer( 'leaflet-opendap-layer', {
 
   url : "", variable : "", date : moment().unix(),
 
-/*
-  toMoment: {
-    toDOM: function(value) {
-      console.log( "toDOM = " + value );
-
-      console.log( this.seconds );
-      return moment( value ).format("ddd, hA");
-    },
-    toModel: function(value) {
-      console.log( "toModel = " + value );
-      console.log( this.seconds );
-      return moment( value ).format("ddd, hA");
-    }
+  observe: {
+    'container storage': 'containerChanged'
   },
-*/
+
+  created: function () {
+  },
+
+  ready: function () {
+  },
+
   toMoment: function(value) {
-    //console.log( "toDOM = " + value );
-    //console.log( this.seconds );
-    //console.log( moment( parseInt( value ) * 1000 ) );
     return moment( parseInt( value ) * 1000 ).format("HH:mm DD-MMM-YYYY");
-    //return value;
   },
 
   provider: function( xhr ) {
@@ -284,14 +275,12 @@ Polymer( 'leaflet-opendap-layer', {
     };
   },
 
-  created: function () {
-  },
-
   containerChanged: function () {
-    if ( this.container ) {
+    if ( this.container && this.storage) {
       var config = {
-        url     : this.url,
-        provider: this.provider( this.$.xhr )
+        url       : this.url,
+        provider  : this.provider( this.$.xhr ),
+        storage   : this.storage
       };
       var options = {
         variable  : this.variable,
