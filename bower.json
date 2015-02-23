@@ -28,6 +28,6 @@
     "paper-progress"        : "polymer/paper-progress",
     "paper-shadow"          : "polymer/paper-shadow",
     "kettstreet"            : "johnlayton/kettstreet",
-    "leightcourt"           : "johnlayton/leightcourt"
+    "leighcourt"            : "johnlayton/leighcourt"
   }
 }
