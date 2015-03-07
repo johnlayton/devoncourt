@@ -14,16 +14,16 @@
 
 ##### Example
 
-<lleaflet-opendap-layer> </leaflet-opendap-layer>
+<lleaflet-webgl-layer> </leaflet-webgl-layer>
 
 ##### Example
 
-<leaflet-opendap-layer url="..." variable="...">
-</leaflet-opendap-layer>
+<leaflet-webgl-layer url="..." variable="...">
+</leaflet-webgl-layer>
 
-@element leaflet-opendap-layer
+@element leaflet-webgl-layer
 -->
-<polymer-element name="leaflet-opendap-layer" attributes="url variable theme legend date">
+<polymer-element name="leaflet-webgl-layer" attributes="url variable theme legend date">
   <template>
     <style>
       /*
@@ -49,7 +49,7 @@
       }
 
       #time {
-        /*position: absolute;*/
+        position: absolute;
         bottom: 10px;
         left: 10px;
         height: 75px;
@@ -62,6 +62,12 @@
         padding-left: 16px;
       }
 
+      #canvas {
+        top: 0px;
+        left: 0px;
+        height: 100%;
+        width: 100%;
+      }
     </style>
 
     <script id="fragment" type="x-shader/x-fragment">
@@ -116,7 +122,7 @@
       <paper-slider id="slider" immediateValue="{{ date }}"></paper-slider>
     </paper-shadow>
 
-    <canvas id="canvas" />
+    <canvas id="canvas"></canvas>
 
     <web-storage storage="{{storage}}" group="OpenDap" resource="{{variable}}"></web-storage>
   </template>
@@ -125,37 +131,15 @@
 
   </script>
 
-  <script src="../lodash/dist/lodash.js"></script>
+  <script src="../q/q.js"></script>
   <script src="../d3/d3.js"></script>
   <script src="../moment/moment.js"></script>
+  <script src="../lodash/dist/lodash.js"></script>
 
-  <script src="../kettstreet/kettstreet.js"></script>
+  <!--<script src="../kettstreet/kettstreet.js"></script>-->
 
   <script src="./webgl-themes.js"></script>
   <script src="./webgl-overlay.js"></script>
-  <script src="leaflet-opendap-layer.js"></script>
+  <script src="leaflet-webgl-layer.js"></script>
 
-</polymer-element>
-
-<polymer-element name="leaflet-opendap-colors" attributes="">
-  <template>
-    <style>
-      /*
-      :host {
-        display: none;
-      }
-      */
-    </style>
-  </template>
-
-  <script>
-    "user strict"
-
-    Polymer( 'leaflet-opendap-colors', {
-
-      created : function () {
-      }
-
-    } );
-  </script>
 </polymer-element>

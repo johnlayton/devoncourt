@@ -41,9 +41,11 @@
                                  -1, 1, 0, 1]);
       }
       catch ( e ) {
+        alert( "Could not initialise WebGL" );
+        console.log( e );
       }
       if ( !gl ) {
-        alert( "Could not initialise WebGL, sorry :-(" );
+        alert( "Could not initialise WebGL" );
       }
     };
 
@@ -131,43 +133,79 @@
     var squareVertexColorBuffer;
 
     var initBuffers = function( options, data, indicies ) {
-      squareVertexPositionBuffer = squareVertexPositionBuffer || gl.createBuffer();
-      gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexPositionBuffer );
-      var vertices = [];
-      for ( var i = 0, len = indicies.length; i < len; i++ ) {
-        //vertices.push( ( data[indicies[i]][0] / gl.viewportWidth ) * 1 );
-        //vertices.push( ( data[indicies[i]][1] / gl.viewportHeight ) * -1 );
+      if ( indicies ) {
+        squareVertexPositionBuffer = squareVertexPositionBuffer || gl.createBuffer();
+        gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexPositionBuffer );
 
-        if ( !data[indicies[i]] ) {
-          console.log( "Missing Data " + i + " -> " + indicies[i]);
-          debugger;
+        var vertices = [];
+        for ( var i = 0, len = indicies.length; i < len; i++ ) {
+          //vertices.push( ( data[indicies[i]][0] / gl.viewportWidth ) * 1 );
+          //vertices.push( ( data[indicies[i]][1] / gl.viewportHeight ) * -1 );
+
+          if ( !data[indicies[i]] ) {
+            console.log( "Missing Data " + i + " -> " + indicies[i]);
+            debugger;
+          }
+          vertices.push( data[indicies[i]][0] );
+          vertices.push( data[indicies[i]][1] );
+          vertices.push( 0.0 );
         }
-        vertices.push( data[indicies[i]][0] );
-        vertices.push( data[indicies[i]][1] );
-        vertices.push( 0.0 );
+
+        gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( vertices ), gl.STATIC_DRAW );
+        squareVertexPositionBuffer.itemSize = 3;
+        squareVertexPositionBuffer.numItems = indicies.length;
+
+        squareVertexColorBuffer = squareVertexColorBuffer || gl.createBuffer();
+        gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
+        colors = [];
+        for ( var i = 0, len = indicies.length; i < len; i++ ) {
+          var col = rgb( options, data[indicies[i]][2] );
+          colors.push( col[0] / 255 );
+          colors.push( col[1] / 255 );
+          colors.push( col[2] / 255 );
+          colors.push( col[3] );
+        }
+
+        gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
+        squareVertexColorBuffer.itemSize = 4;
+        squareVertexColorBuffer.numItems = indicies.length;
+      } else {
+        squareVertexPositionBuffer = squareVertexPositionBuffer || gl.createBuffer();
+        gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexPositionBuffer );
+
+        var vertices = [];
+
+        for ( var i = 0, len = data.length; i < len; i++ ) {
+          //vertices.push( ( data[indicies[i]][0] / gl.viewportWidth ) * 1 );
+          //vertices.push( ( data[indicies[i]][1] / gl.viewportHeight ) * -1 );
+
+          vertices.push( data[i][0] );
+          vertices.push( data[i][1] );
+          vertices.push( 0.0 );
+        }
+
+        gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( vertices ), gl.STATIC_DRAW );
+        squareVertexPositionBuffer.itemSize = 3;
+        squareVertexPositionBuffer.numItems = data.length;
+
+        squareVertexColorBuffer = squareVertexColorBuffer || gl.createBuffer();
+        gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
+        colors = [];
+        for ( var i = 0, len = data.length; i < len; i++ ) {
+          var col = rgb( options, data[i][2] );
+          colors.push( col[0] / 255 );
+          colors.push( col[1] / 255 );
+          colors.push( col[2] / 255 );
+          colors.push( col[3] );
+        }
+
+        gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
+        squareVertexColorBuffer.itemSize = 4;
+        squareVertexColorBuffer.numItems = data.length;
       }
-
-      gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( vertices ), gl.STATIC_DRAW );
-      squareVertexPositionBuffer.itemSize = 3;
-      squareVertexPositionBuffer.numItems = indicies.length;
-
-      squareVertexColorBuffer = squareVertexColorBuffer || gl.createBuffer();
-      gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
-      colors = [];
-      for ( var i = 0, len = indicies.length; i < len; i++ ) {
-        var col = rgb( options, data[indicies[i]][2] );
-        colors.push( col[0] / 255 );
-        colors.push( col[1] / 255 );
-        colors.push( col[2] / 255 );
-        colors.push( col[3] );
-      }
-
-      gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
-      squareVertexColorBuffer.itemSize = 4;
-      squareVertexColorBuffer.numItems = indicies.length;
     };
 
-    var drawScene = function() {
+    var drawScene = function( drawArrays ) {
       gl.viewport( 0, 0, gl.viewportWidth, gl.viewportHeight );
       gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
@@ -181,8 +219,8 @@
 
       //setMatrixUniforms();
       gl.uniformMatrix4fv( shaderProgram.mapMatrixUniform, false, mapMatrix );
-      gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );
-      //gl.drawArrays( gl.POINTS, 0, squareVertexPositionBuffer.numItems );
+
+      drawArrays( gl );
     };
 
     var rgb = function ( options, i ) {
@@ -206,43 +244,9 @@
        return [ 0.0, 0.0, 0.0, 1.0]
        */
     };
-/*
-    function LatLongToPixelXY(latitude, longitude) {
-      var pi_180 = Math.PI / 180.0;
-      var pi_4 = Math.PI * 4;
-      var sinLatitude = Math.sin(latitude * pi_180);
-      var pixelY = (0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (pi_4)) * 256;
-      var pixelX = ((longitude + 180) / 360) * 256;
 
-      var pixel = { x: pixelX, y: pixelY };
-
-      return pixel;
-    }
-
-    function translateMatrix(matrix, tx, ty) {
-      // translation is in last column of matrix
-      matrix[12] += matrix[0] * tx + matrix[4] * ty;
-      matrix[13] += matrix[1] * tx + matrix[5] * ty;
-      matrix[14] += matrix[2] * tx + matrix[6] * ty;
-      matrix[15] += matrix[3] * tx + matrix[7] * ty;
-    }
-
-    function scaleMatrix(matrix, scaleX, scaleY) {
-      // scaling x and y, which is just scaling first two columns of matrix
-      matrix[0] *= scaleX;
-      matrix[1] *= scaleX;
-      matrix[2] *= scaleX;
-      matrix[3] *= scaleX;
-
-      matrix[4] *= scaleY;
-      matrix[5] *= scaleY;
-      matrix[6] *= scaleY;
-      matrix[7] *= scaleY;
-    }
-*/
     var Overlay = function ( options ) {
       this.options = options;
-      //this.data = [];
 
       initGL( options );
       initShaders( options );
@@ -268,12 +272,42 @@
     };
 
     Overlay.prototype.resize = function () {
-      //console.log( "resize" );
+      console.log( "resize" );
+
+/*
+      var canvasHeight, canvasWidth;
+      canvasWidth = this.options.canvas.offsetWidth || 2;
+      canvasHeight = this.options.canvas.offsetHeight || 2;
+      //if (this.width !== canvasWidth || this.height !== canvasHeight) {
+        gl.viewport(0, 0, canvasWidth, canvasHeight);
+        this.options.canvas.width = canvasWidth;
+        this.options.canvas.height = canvasHeight;
+        //this.width = canvasWidth;
+        //this.height = canvasHeight;
+        //return this.heights.resize(this.width, this.height);
+      //}
+*/
+    };
+
+    Overlay.prototype.displayPoints = function ( data) {
+      initBuffers( this.options, data );
+      drawScene( function( gl ) {
+        gl.drawArrays( gl.POINTS, 0, squareVertexPositionBuffer.numItems );
+      } );
+    };
+
+    Overlay.prototype.displayTriangles = function ( data, rows, cols) {
+      initBuffers( this.options, data, create_indices( rows, cols ) );
+      drawScene( function( gl ) {
+        gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );
+      } );
     };
 
     Overlay.prototype.display = function ( data, rows, cols) {
       initBuffers( this.options, data, create_indices( rows, cols ) );
-      drawScene();
+      drawScene(function( gl ) {
+        gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );
+      });
     };
 
     return Overlay;

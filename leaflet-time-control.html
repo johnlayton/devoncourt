@@ -1,0 +1,63 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<link rel="import" href="../leaflet-map/leaflet-import.html">
+
+<link rel="import" href="../paper-slider/paper-slider.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-shadow/paper-shadow.html">
+<link rel="import" href="../paper-interval-slider/paper-interval-slider.html">
+
+<!--
+
+##### Example
+
+	<lleaflet-time-control> </leaflet-time-control>
+
+##### Example
+
+	<leaflet-time-control>
+	</leaflet-time-control>
+
+@element leaflet-time-control
+-->
+<polymer-element name="leaflet-time-control" >
+  <template>
+    <link rel="stylesheet" href="../leaflet/dist/leaflet.css" />
+    <style>
+/*
+      :host {
+        display: none;
+      }
+*/
+    </style>
+
+<!--
+    <div class="leaflet-control-container">
+      <div class="leaflet-top leaflet-right">
+        <div class="leaflet-control-zoom leaflet-bar leaflet-control">
+          <a class="leaflet-control-zoom-in" href="#" title="Zoom in">+</a
+            ><a class="leaflet-control-zoom-out" href="#" title="Zoom out">-</a>
+        </div></div><div class="leaflet-top leaflet-right">
+      </div>
+    </div>
+-->
+
+    <!--<div class="leaflet-control-container">-->
+      <div class="leaflet-bottom leaflet-left">
+        <div class="leaflet-control">
+          <!--<paper-shadow id="time" z="3" class="span-shadow" vertical>-->
+          <div id="time">
+            <paper-button id="label">{{ date | toMoment }}</paper-button>
+            <paper-slider id="slider" immediateValue="{{ date }}"></paper-slider>
+          </div>
+          <!--</paper-shadow>-->
+        </div>
+      </div>
+    <!--</div>-->
+
+  </template>
+
+  <script src="../moment/moment.js"></script>
+  <script src="./leaflet-time-control.js"> </script>
+
+</polymer-element>
