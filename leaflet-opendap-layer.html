@@ -8,6 +8,7 @@
 <link rel="import" href="../paper-shadow/paper-shadow.html">
 <link rel="import" href="../paper-interval-slider/paper-interval-slider.html">
 
+<link rel="import" href="leaflet-time-control.html">
 <link rel="import" href="../leighcourt/web-storage.html">
 
 <!--
@@ -23,7 +24,7 @@
 
 @element leaflet-opendap-layer
 -->
-<polymer-element name="leaflet-opendap-layer" attributes="url variable theme legend date">
+<polymer-element name="leaflet-opendap-layer" attributes="url variable theme legend current">
   <template>
     <style>
       /*
@@ -48,12 +49,13 @@
         -webkit-appearance: slider-vertical;
       }
 
-      #time {
-        /*position: absolute;*/
+      /*#time {*/
+      leaflet-time-control {
+        position: absolute;
         bottom: 10px;
-        left: 10px;
-        height: 75px;
-        width: 250px;
+        right: 10px;
+        /*height: 75px;*/
+        /*width: 250px;*/
         background: white;
         z-index: 999;
       }
@@ -111,14 +113,18 @@
 
     <input id="threshold" class="threshold-slider" type="range" step="1" width="50" height="150" multiple value="0,25" />
 
+<!--
     <paper-shadow id="time" z="3" class="span-shadow leaflet-control-container" vertical>
       <paper-button id="label">{{ date | toMoment }}</paper-button>
       <paper-slider id="slider" immediateValue="{{ date }}"></paper-slider>
     </paper-shadow>
+-->
+    <leaflet-time-control id="time" current="{{ current }}">
+    </leaflet-time-control>
 
     <canvas id="canvas" />
 
-    <web-storage storage="{{storage}}" group="OpenDap" resource="{{variable}}"></web-storage>
+    <web-storage storage="{{ storage }}" group="OpenDap" resource="{{ variable }}"></web-storage>
   </template>
 
   <script>

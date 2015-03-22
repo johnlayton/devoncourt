@@ -12,15 +12,37 @@ L.Control.Time = L.Control.extend( {
     var name = 'leaflet-control-time',
       container = L.DomUtil.create( 'div', name + ' leaflet-bar' );
 
-    this._map = map;
+    this.options.ui.addEventListener('mouseover', function () {
+      map.dragging.disable();
+    });
 
-    container.appendChild( this.options.ui );
+    this.options.ui.addEventListener('mouseout', function () {
+      map.dragging.enable();
+    });
+
+    //this._map = map;
+
+    //container.appendChild( this.options.ui );
 
     //this._svg = this._createSvg( 'inspect', this.options.chart );
 
     //map.on( 'mousemove', _.debounce( this._mouseMove.bind( this ), 200 ), this );
 
-    console.log( "Add to Map " + container );
+    //console.log( "Add to Map " + container );
+
+    //return this.options.ui;
+    //L.DomUtil.setPosition
+
+    //map.getContainer().appendChild( this.options.ui );
+    //container.appendChild( this.options.ui );
+
+    //console.log( map.getPixelBounds() );
+    //debugger;
+    //
+    //this.options.ui.style.right = "10px";
+    //this.options.ui.style.top = "10px";
+
+    //debugger;
 
     return container;
   }
@@ -42,20 +64,31 @@ L.control.time = function ( options ) {
   return new L.Control.Time( options );
 };
 
-
-
-
 Polymer( 'leaflet-time-control', {
 
-  created : function () {
+  observe: {
+    'minimum': 'rangeChanged',
+    'maximum': 'rangeChanged',
+    'current': 'currentChanged'
   },
 
-  toMoment : function ( value ) {
-    return moment( parseInt( value ) * 1000 ).format( "HH:mm DD-MMM-YYYY" );
+  rangeChanged : function(){
+    this.dates = [];
+    var count = moment.unix( this.maximum ).diff( moment.unix( this.minimum ), 'days' );
+    for ( var i = 0; i < count; i++ ) {
+      this.dates.push( moment.unix( this.minimum ).add( i, 'days' ) );
+    }
+  },
+
+  currentChanged: function() {
+    console.log( "### Current Date Changed ###" );
   },
 
   containerChanged : function () {
     if ( this.container ) {
+
+      debugger;
+
       this.control = L.control.time( {
         ui : this.$.time
       } );

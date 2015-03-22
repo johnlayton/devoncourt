@@ -135,6 +135,7 @@ L.TileLayer.WebGL = L.Class.extend( {
 		var tileBounds = L.bounds(
 		        bounds.min.divideBy(tileSize)._floor(),
 		        bounds.max.divideBy(tileSize)._floor());
+
 /*
 
 		if (this.options.unloadInvisibleTiles || this.options.reuseTiles) {
@@ -168,6 +169,8 @@ L.TileLayer.WebGL = L.Class.extend( {
         queue.push( this._requestTile( undefined, point, this._map.getZoom()  ) );
 			}
 		}
+
+    debugger;
 
     return queue;
 	},
@@ -224,6 +227,29 @@ L.TileLayer.WebGL = L.Class.extend( {
 
   _requestTile: function ( tile, tilePoint, zoom ) {
 
+    var tileSize = this._getTileSize();
+    var map = this._map;
+
+    var bounds = function( point ) {
+      return L.bounds( point, point.add( L.point( 1, 1 ) ) );
+    };
+
+    var latLngbounds = function ( tileBounds ) {
+      var bounds = L.bounds(
+            tileBounds.min.multiplyBy( tileSize )._floor(),
+            tileBounds.max.multiplyBy( tileSize )._floor() ),
+          sw = map.unproject( bounds.getBottomLeft() ),
+          ne = map.unproject( bounds.getTopRight() );
+
+      return new L.LatLngBounds(sw, ne);
+    };
+
+    //debugger;
+    //
+    //console.log( tilePoint );
+    //console.log( latLngbounds( bounds( tilePoint ) ) );
+
+
     this._adjustTilePoint(tilePoint);
 
     var deferred = Q.defer();
@@ -234,7 +260,7 @@ L.TileLayer.WebGL = L.Class.extend( {
     var provider = this.options.provider;
     var cache = this.options.cache;
 
-    console.log( key );
+    //console.log( key );
 
     var process = function( data ) {
       var result = [];
@@ -317,8 +343,8 @@ Polymer( 'leaflet-webgl-layer', {
   ready: function () {
     var now = moment();
     this.$.slider.value = now.unix();
-    this.$.slider.min   = now.startOf( 'day' ).unix();
-    this.$.slider.max   = now.add( 6, 'days' ).startOf( 'day' ).unix();
+    this.$.slider.min   = now.add( -6, 'days' ).startOf( 'day' ).unix();
+    this.$.slider.max   = now.add(  1, 'days' ).startOf( 'day' ).unix();
     this.$.slider.step  = 60 * 60;
   },
 
