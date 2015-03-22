@@ -413,9 +413,6 @@ Polymer( 'leaflet-opendap-layer', {
   },
 
   currentChanged: function() {
-
-    console.log( "Current Changed OpenDap Layer..." );
-
     if ( this.container && this.layer) {
       this.layer.setCurrentTime( moment.unix( this.current ) );
     }
@@ -434,8 +431,8 @@ Polymer( 'leaflet-opendap-layer', {
         vertex    : this.$.points,
         kettstreet: kettstreet( {
           url       : this.url,
-          provider  : this.provider( this.$.xhr ),
-          cache     : this.storage
+          provider  : this.provider( this.$.xhr )
+          //cache     : this.storage
         } )
       };
       this.layer = new L.layer.opendap( this.url, options );
