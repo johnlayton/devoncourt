@@ -13,7 +13,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
   initialize: function ( url, options ) {
     L.setOptions( this, options );
-    //this.data = [];
     this._url = url;
     this._currentTime = moment();
     this._currentThreshold = 0;
@@ -45,7 +44,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     //this._createTimeSlider();
     //this._createThresholdSlider();
 
-
     map.on( "move", this._update, this );
 
     /* hide layer on zoom, because it doesn't animate zoom */
@@ -58,7 +56,7 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
   onRemove: function ( map ) {
     map.getPanes().overlayPane.removeChild( this.canvas );
-    map.off( "move", this._plot, this );
+    map.off( "move", this._update, this );
     map.off( "zoomstart", this._hide, this );
     map.off( "zoomend", this._show, this );
   },
@@ -85,27 +83,10 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
     return slider;
   },
-*/
 
-/*
   _updateThreshold: function( e ) {
     this._currentThreshold = e.target.value;
     this._plot();
-  },
-*/
-
-/*
-  _rollTime: function(e) {
-    //this._currentTime = moment( parseInt( e.target.value ) * 1000 );
-    this._currentTime = moment( parseInt( this.options.time.slider.immediateValue ) * 1000 );
-    //console.log( moment( parseInt( this.options.time.slider.immediateValue ) * 1000 ) );
-    //console.log( this._currentTime );
-    this._update();
-  },
-
-  _rollTime_2 : function ( e ) {
-    this._currentTime = moment( parseInt( e.target.value ) * 1000 );
-    this._update();
   },
 */
 
@@ -128,7 +109,10 @@ L.TileLayer.OpenDAP = L.Class.extend( {
   //_resizeRequest: undefined,
 	_update: function () {
 
-    var map = this.map;
+    var map = this.map,
+        bounds = map.getPixelBounds(),
+        zoom = map.getZoom(),
+        tileSize = this._getTileSize();
 
     if ( this._resizeRequest !== map._resizeRequest ) {
       this.resize();
@@ -140,16 +124,9 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     L.DomUtil.setPosition( this.canvas,
                            map.latLngToLayerPoint( map.getBounds().getNorthWest() ) );
 
-    //this.resize();
-
 		if (!this.map) {
       return;
     }
-
-		var map = this.map,
-		    bounds = map.getPixelBounds(),
-		    zoom = map.getZoom(),
-		    tileSize = this._getTileSize();
 
 		if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
 			return;
@@ -184,25 +161,21 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
  	_requestTiles: function (bounds) {
 		var queue = [], j, i, point;
-
 		for (j = bounds.min.y; j <= bounds.max.y; j++) {
 			for (i = bounds.min.x; i <= bounds.max.x; i++) {
 				point = new L.Point(i, j);
-        //queue.push( this.drawTile( undefined, point, this.map.getZoom()  ) );
         queue.push( this._requestTile( undefined, point, this.map.getZoom()  ) );
 			}
 		}
-
-    //debugger;
-
     return queue;
 	},
 
   _requestTile: function ( tile, tilePoint, zoom ) {
 
-    var options = this.options;
-    var tileSize = this._getTileSize();
-    var map = this.map;
+    var map = this.map,
+        options = this.options,
+        cache = this.options.cache,
+        tileSize = this._getTileSize();
 
     var bounds = function( point ) {
       return L.bounds( point, point.add( L.point( 1, 1 ) ) );
@@ -242,40 +215,12 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       }
     };
 
-    ////debugger;
-    //
-    //console.log( tilePoint );
-    //console.log( latLngbounds( bounds( tilePoint ) ) );
-
-
     this._adjustTilePoint(tilePoint);
 
     var deferred = Q.defer();
 
     var key = JSON.stringify( tilePoint );
-    var url = this._getTileUrl( tilePoint );
-
-    //var provider = this.options.provider;
-    var cache = this.options.cache;
-
-    //console.log( key );
-
-    var _process = function( data ) {
-      var result = [];
-      var times      = data.head[0].values;
-      var latitudes  = data.head[1].values;
-      var longitudes = data.head[2].values;
-      for ( var time = 0; time < times.length ; time++ ) {
-        for ( var lat = 0; lat < latitudes.length; lat++ ) {
-          for ( var lng = 0; lng < longitudes.length; lng++ ) {
-            var _lat = latitudes[lat];
-            var _lng = longitudes[lng];
-            result.push( [ _lat, _lng, data.data[lat][lng] /*lng + ( lat * lng ) + ( time * lat * lng )]*/ ] );
-          }
-        }
-      }
-      return result;
-    };
+    //var url = this._getTileUrl( tilePoint );
 
     var process = function( variable, data ) {
 
@@ -291,17 +236,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       var latitudes = findData( all_data, 'latitude' );
       var longitudes = findData( all_data, 'longitude' );
 
-      //for ( var time = 0; time < times.length ; time++ ) {
-      //  for ( var lat = 0; lat < latitudes.length; lat++ ) {
-      //    for ( var lng = 0; lng < longitudes.length; lng++ ) {
-      //      var _lat = latitudes[lat];
-      //      var _lng = longitudes[lng];
-      //      result.push( [ _lat, _lng, data.data[lat][lng] /*lng + ( lat * lng ) + ( time * lat * lng )]*/ ] );
-      //    }
-      //  }
-      //}
-      //return result;
-
       for ( var time = 0; time < var_data.length ; time++ ) {
         var d1 = var_data[0];
         for ( var lat = 0; lat < d1.length; lat++ ) {
@@ -315,11 +249,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       }
 
       return result;
-      //return {
-      //  data: result,
-      //  rows: latitudes.length,
-      //  cols: longitudes.length
-      //};
     };
 
     cache.get( key, function( value ) {
@@ -327,9 +256,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       deferred.resolve( process( variable, value.data ) );
     }, function() {
       options.kettstreet.dap( variable, query, function( err, data ){
-
-        //debugger;
-
         if ( err ) {
           deferred.reject(new Error(err));
         } else {
@@ -337,11 +263,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
           console.log( "From remote -> " + data );
           deferred.resolve( process( variable, data ) );
         }
-        //var data = this.process_data( variable, resp );
-        //this.rows = data.rows;
-        //this.cols = data.cols;
-        //this.data = data.data;
-        //this._plot();
       } );
     } );
 
@@ -349,10 +270,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
   },
 
   _render : function( results ) {
-
-    //debugger;
-
-
     var map = this.map;
 
     // merge the results
@@ -422,42 +339,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     tilePoint.t = this._currentTime.unix()
   },
 
-/*
-  _update2: function() {
-
-    console.log( "Update ..." );
-
-    var sth = this.map.getBounds().getSouth(),
-        nth = this.map.getBounds().getNorth(),
-        est = this.map.getBounds().getEast(),
-        wst = this.map.getBounds().getWest();
-    var variable = this.options.variable;
-    var query = {
-      time     : {
-        min: this._currentTime.unix(),
-        max: this._currentTime.unix(),
-        step: 1
-      },
-      latitude : {
-        min : sth,
-        max : nth,
-        step: 1
-      },
-      longitude: {
-        min : wst,
-        max : est,
-        step: 1
-      }
-    };
-    this.options.kettstreet.dap( variable, query, function( err, resp ){
-      var data = this.process_data( variable, resp );
-      this.rows = data.rows;
-      this.cols = data.cols;
-      this.data = data.data;
-      this._plot();
-    }.bind( this ) );
-  },
-*/
   _hide: function () {
     this.canvas.style.display = 'none';
   },
@@ -474,32 +355,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
   _resizeRequest: undefined,
 
-/*
-  _plot: function () {
-    this.active = true;
-    var map = this.map;
-    if ( this._resizeRequest !== map._resizeRequest ) {
-      this.resize();
-      this._resizeRequest = map._resizeRequest;
-    }
-    var overlay = this.overlay;
-    overlay.clear();
-    L.DomUtil.setPosition( this.canvas, map.latLngToLayerPoint( map.getBounds().getNorthWest() ) );
-    var dataLen = this.data.length;
-    if ( dataLen ) {
-      var data = [];
-      for ( var i = 0; i < dataLen; i++ ) {
-        var dataVal = this.data[i],
-          latlng = new L.LatLng( dataVal[0], dataVal[1] ),
-          point = map.latLngToContainerPoint( latlng );
-        data.push( [ Math.floor( point.x ), Math.floor( point.y ), dataVal[2] ] );
-      }
-      overlay.update( { min: this._currentThreshold } );
-      overlay.display( data, this.rows, this.cols );
-    }
-  },
-*/
-
   resize: function () {
     //helpful for maps that change sizes
     var mapsize = this.map.getSize();
@@ -512,7 +367,7 @@ L.TileLayer.OpenDAP = L.Class.extend( {
   update: function () {
     this._update();
     //this._plot();
-  },
+  }
 
 
 } );
@@ -568,19 +423,10 @@ Polymer( 'leaflet-opendap-layer', {
 
   containerChanged: function () {
     if ( this.container && this.storage) {
-      //var config = {
-      //  url       : this.url,
-      //  provider  : this.provider( this.$.xhr ),
-      //  cache     : this.storage
-      //};
       var options = {
         cache     : this.storage,
-        provider  : this.provider( this.$.xhr ),
         variable  : this.variable,
         canvas    : this.$.canvas,
-        //time      : {
-        //  slider: this.$.slider
-        //},
         threshold : {
           slider: this.$.threshold
         },
