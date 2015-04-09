@@ -1,11 +1,10 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="../core-menu/core-menu.html">
-<link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../core-menu/core-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
 
-<script src="./webgl-themes.js"></script>
 
 <polymer-element name="leaflet-themes-control" attributes="theme">
   <template>
@@ -45,24 +44,7 @@
 
   </template>
 
-  <script>
-    "user strict"
+  <script src="./webgl-themes.js"></script>
+  <script src="./leaflet-opendap-layer.js"></script>
 
-    Polymer( 'leaflet-themes-control', {
-
-      names : function( themes ) {
-        return themes.names();
-      },
-
-      selectTheme: function(evt, detail) {
-        this.theme = this.themes.theme( evt.srcElement.selected );
-      },
-
-      created : function () {
-        this.themes = createThemes();
-//        this.theme = this.themes.theme( "jet" );
-      }
-
-    } );
-  </script>
 </polymer-element>

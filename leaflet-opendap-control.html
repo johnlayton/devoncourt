@@ -74,8 +74,6 @@
 
     <paper-shadow id="time" z="3" vertical center-justified layout>
 
-      <!--horizontal center-justified layout-->
-
       <leaflet-time-control current="{{ current }}">
       </leaflet-time-control>
 
@@ -86,14 +84,7 @@
 
   </template>
 
-  <script>
-    "user strict"
+  <script src="leaflet-opendap-control.js"></script>
 
-    Polymer( 'leaflet-opendap-control', {
-
-      created : function () {
-      }
-
-    } );
-  </script>
 </polymer-element>
+

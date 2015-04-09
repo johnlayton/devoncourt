@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-ajax/core-ajax.html">
 <link rel="import" href="../leaflet-map/leaflet-import.html">
 
 <!--
@@ -25,21 +24,6 @@
   </template>
 
   <script src="../leaflet-hash/leaflet-hash.js"></script>
+  <script src="leaflet-hash-control.js"></script>
 
-  <script>
-    "user strict"
-
-    Polymer( 'leaflet-hash-control', {
-
-      created : function () {
-      },
-
-      containerChanged : function () {
-        if ( this.container ) {
-          new L.Hash( this.container );
-        }
-      }
-
-    } );
-  </script>
 </polymer-element>

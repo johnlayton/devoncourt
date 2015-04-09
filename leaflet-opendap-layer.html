@@ -72,18 +72,12 @@
 
     <core-xhr id="xhr"></core-xhr>
 
-<!--
-class="span-shadow leaflet-control-container"
--->
-
     <leaflet-opendap-control theme="{{ theme }}" current="{{ current }}">
-
     </leaflet-opendap-control>
 
     <canvas id="canvas" />
 
     <web-storage storage="{{ storage }}" resource="{{ variable }}" group="OpenDap" >
-
     </web-storage>
 
   </template>
@@ -103,28 +97,3 @@ class="span-shadow leaflet-control-container"
   <script src="./leaflet-opendap-layer.js"></script>
 
 </polymer-element>
-
-<!--
-<polymer-element name="leaflet-opendap-colors" attributes="">
-  <template>
-    <style>
-      /*
-      :host {
-        display: none;
-      }
-      */
-    </style>
-  </template>
-
-  <script>
-    "user strict"
-
-    Polymer( 'leaflet-opendap-colors', {
-
-      created : function () {
-      }
-
-    } );
-  </script>
-</polymer-element>
--->
