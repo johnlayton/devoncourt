@@ -1,0 +1,99 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="leaflet-themes-control.html">
+<link rel="import" href="leaflet-time-control.html">
+
+<polymer-element name="leaflet-opendap-control" attributes="current theme">
+  <template>
+    <style>
+      /*
+      :host {
+        display: none;
+      }
+      */
+
+      /*.threshold-slider {*/
+        /*position: absolute;*/
+        /*top: 10px;*/
+        /*right: 10px;*/
+        /*background: rgba(255, 255, 255, 0.4);*/
+        /*border-radius: 10px;*/
+        /*border-style: solid;*/
+        /*border-color: #7b98bc;*/
+        /*padding: 2px;*/
+        /*font-size: 20px;*/
+        /*height: 80%;*/
+        /*width: 30px;*/
+        /*line-height: 26px;*/
+        /*-webkit-appearance: slider-vertical;*/
+      /*}*/
+
+      /*#time {*/
+        /*position: absolute;*/
+        /*bottom: 10px;*/
+        /*right: 10px;*/
+        /*height: 75px;*/
+        /*width: 250px;*/
+        /*background: white;*/
+        /*z-index: 999;*/
+      /*}*/
+
+      :host {
+        display: block;
+        position: relative;
+        font-size: 16px;
+        box-sizing: border-box;
+        min-width: 7em;
+        outline: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: pointer;
+        z-index: 0;
+      }
+
+      /*:host /deep/ div {*/
+        /*background-color: white;*/
+      /*}*/
+
+      :host /deep/ paper-dropdown #scroller {
+        box-sizing: border-box;
+        padding: 8px;
+        margin: 12px;
+      }
+
+      /*.with-margin {*/
+      /*margin: 12px;*/
+      /*}*/
+    </style>
+
+    <!--
+        <input id="threshold" class="threshold-slider" type="range" step="1" width="50" height="150" multiple value="0,25" />
+    -->
+
+    <paper-shadow id="time" z="3" vertical center-justified layout>
+
+      <!--horizontal center-justified layout-->
+
+      <leaflet-time-control current="{{ current }}">
+      </leaflet-time-control>
+
+      <leaflet-themes-control theme="{{ theme }}">
+      </leaflet-themes-control>
+
+    </paper-shadow>
+
+  </template>
+
+  <script>
+    "user strict"
+
+    Polymer( 'leaflet-opendap-control', {
+
+      created : function () {
+      }
+
+    } );
+  </script>
+</polymer-element>

@@ -42,7 +42,6 @@
       }
       catch ( e ) {
         alert( "Could not initialise WebGL" );
-        console.log( e );
       }
       if ( !gl ) {
         alert( "Could not initialise WebGL" );
@@ -133,6 +132,8 @@
     var squareVertexColorBuffer;
 
     var initBuffers = function( options, data, indicies ) {
+
+
       if ( indicies ) {
         squareVertexPositionBuffer = squareVertexPositionBuffer || gl.createBuffer();
         gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexPositionBuffer );
@@ -159,11 +160,12 @@
         gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
         colors = [];
         for ( var i = 0, len = indicies.length; i < len; i++ ) {
-          var col = rgb( options, data[indicies[i]][2] );
+          var col = options.theme.color( data[indicies[i]][2] );
           colors.push( col[0] / 255 );
           colors.push( col[1] / 255 );
           colors.push( col[2] / 255 );
-          colors.push( col[3] );
+          //colors.push( col[3] );
+          colors.push( 0.6 );
         }
 
         gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
@@ -174,11 +176,9 @@
         gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexPositionBuffer );
 
         var vertices = [];
-
         for ( var i = 0, len = data.length; i < len; i++ ) {
           //vertices.push( ( data[indicies[i]][0] / gl.viewportWidth ) * 1 );
           //vertices.push( ( data[indicies[i]][1] / gl.viewportHeight ) * -1 );
-
           vertices.push( data[i][0] );
           vertices.push( data[i][1] );
           vertices.push( 0.0 );
@@ -191,12 +191,21 @@
         squareVertexColorBuffer = squareVertexColorBuffer || gl.createBuffer();
         gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
         colors = [];
+
+        //console.log( options.theme );
+
         for ( var i = 0, len = data.length; i < len; i++ ) {
-          var col = rgb( options, data[i][2] );
+          //debugger;
+
+          var col = options.theme ? options.theme.color( data[i][2] ) : rgb( options, data[i][2] );
+
+          //console.log( col );
+
           colors.push( col[0] / 255 );
           colors.push( col[1] / 255 );
           colors.push( col[2] / 255 );
-          colors.push( col[3] );
+          //colors.push( col[3] );
+          colors.push( 0.6 );
         }
 
         gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
@@ -224,25 +233,21 @@
     };
 
     var rgb = function ( options, i ) {
+      var jet = [{"index" : 0, "rgb" : [0, 0, 131]},
+                 {"index" : 0.125, "rgb" : [0, 60, 170]},
+                 {"index" : 0.375, "rgb" : [5, 255, 255]},
+                 {"index" : 0.625, "rgb" : [255, 255, 0]},
+                 {"index" : 0.875, "rgb" : [250, 0, 0]}];
+
       if ( i > ( options.min || 0 ) ) {
-        var res = _.findLast( themes('jet'), function( ent ) {
+        var res = _.findLast( jet, function( ent ) {
           return ent.index < ( i / 40 );
-        } ).rgb || [0.0, 0.0, 0.0, 0.0];
-
-        //console.log( res );
-
+        } ).rgb || [0.0, 0.0, 0.0];
         return res;
-        ////var val = 255 * 255 * 255 * i;
-        ////return [( val >> 0  ) & 255, ( val >> 8  ) & 255, ( val >> 16 ) & 255, 0.8];
-        //var val = 255 * 255 * i;
-        //return [( val >> 0 ) & 255, 0, ( val >> 8 ) & 255, 0.8];
       }
       else {
-        return [0.0, 0.0, 0.0, 0.0];
+        return [0.0, 0.0, 0.0];
       }
-      /*
-       return [ 0.0, 0.0, 0.0, 1.0]
-       */
     };
 
     var Overlay = function ( options ) {
@@ -261,13 +266,14 @@
 
     Overlay.prototype.addPoint = function ( x, y, val ) {
       //console.log( "addPoint" + arguments );
-      //this.data.push( [x, y, val] );
     };
 
     Overlay.prototype.update = function ( options ) {
-      //console.log( "update" );
       if ( options && options.min ) {
         this.options.min = options.min;
+      }
+      if ( options && options.theme ) {
+        this.options.theme = options.theme;
       }
     };
 

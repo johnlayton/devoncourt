@@ -1,0 +1,68 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../core-menu/core-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-dropdown/paper-dropdown.html">
+
+<script src="./webgl-themes.js"></script>
+
+<polymer-element name="leaflet-themes-control" attributes="theme">
+  <template>
+    <style>
+      /*
+      :host {
+        display: none;
+      }
+      */
+      :host {
+        display: block;
+        position: relative;
+        font-size: 16px;
+        box-sizing: border-box;
+        min-width: 7em;
+        outline: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: pointer;
+        z-index: 0;
+      }
+    </style>
+
+    <div horizontal center-justified layout>
+      <paper-dropdown-menu id="dropdown" label="Select a colour theme">
+        <paper-dropdown class="dropdown" valign="bottom">
+          <core-menu class="menu" on-core-select="{{ selectTheme }}">
+            <template repeat="{{ names(themes) }}">
+              <paper-item name="{{}}">{{}}</paper-item>
+            </template>
+          </core-menu>
+        </paper-dropdown>
+      </paper-dropdown-menu>
+    </div>
+
+  </template>
+
+  <script>
+    "user strict"
+
+    Polymer( 'leaflet-themes-control', {
+
+      names : function( themes ) {
+        return themes.names();
+      },
+
+      selectTheme: function(evt, detail) {
+        this.theme = this.themes.theme( evt.srcElement.selected );
+      },
+
+      created : function () {
+        this.themes = createThemes();
+//        this.theme = this.themes.theme( "jet" );
+      }
+
+    } );
+  </script>
+</polymer-element>

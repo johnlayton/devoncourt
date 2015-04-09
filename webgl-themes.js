@@ -6,16 +6,16 @@
     define( [], factory );
   }
   else {
-    themes = factory();
+    createThemes = factory();
   }
 }( this, function () {
 
   var themes = {
-    "jet"       : [{"index" : 0, "rgb" : [0, 0, 131, 0.6]},
-                   {"index" : 0.125, "rgb" : [0, 60, 170, 0.6]},
-                   {"index" : 0.375, "rgb" : [5, 255, 255, 0.6]},
-                   {"index" : 0.625, "rgb" : [255, 255, 0, 0.6]},
-                   {"index" : 0.875, "rgb" : [250, 0, 0, 0.6]},
+    "jet"       : [{"index" : 0, "rgb" : [0, 0, 131]},
+                   {"index" : 0.125, "rgb" : [0, 60, 170]},
+                   {"index" : 0.375, "rgb" : [5, 255, 255]},
+                   {"index" : 0.625, "rgb" : [255, 255, 0]},
+                   {"index" : 0.875, "rgb" : [250, 0, 0]},
                    {"index" : 1, "rgb" : [128, 0, 0, 0.6]}],
     "hsv"       : [{"index" : 0, "rgb" : [255, 0, 0]},
                    {"index" : 0.169, "rgb" : [253, 255, 2]},
@@ -132,8 +132,100 @@
                    {"index" : 0, "rgb" : [255, 255, 255, 1]}]
   };
 
-  return function ( key ) {
-    return themes[key];
+  var Theme = (function(){
+    var Theme = function( colours ) {
+
+      //var name = name;
+      var colours = colours;
+      var options = {};
+
+      var findLast = function( arr, otherwise, callback ) {
+        for ( var i = arr.length - 1; i > 0; --i ) {
+          if( callback( arr[i] ) ) {
+            return arr[i];
+          }
+        }
+        return otherwise;
+      };
+
+      this.color = function( i ) {
+        if ( i > ( options.min || 0 ) ) {
+          var res = findLast( colours,  [0.0, 0.0, 0.0], function( ent ) {
+              return ent.index < ( i / 40 );
+          } );
+          //console.log( "Color :: " + res );
+          return res.rgb; //.concat([0.6]);
+        }
+        else {
+          return [0.0, 0.0, 0.0];
+        }
+      };
+
+
+
+      //var rgb = function ( options, i ) {
+      //  if ( i > ( options.min || 0 ) ) {
+      //    var res = _.findLast( options.themes.theme(), function( ent ) {
+      //        return ent.index < ( i / 40 );
+      //      } ).rgb || [0.0, 0.0, 0.0, 0.0];
+      //    return res;
+      //  }
+      //  else {
+      //    return [0.0, 0.0, 0.0, 0.0];
+      //  }
+      //};
+
+      //this.name = name;
+    };
+
+    return Theme;
+  })();
+
+  var Themes = (function () {
+    var Themes = function ( options ) {
+
+      //debugger;
+
+      this.options = options;
+      //this.select = function( theme ) {
+      //  selected = theme;
+      //};
+      //
+      //this.theme = function() {
+      //  return themes[selected];
+      //}
+      //var createThemes = function( t ) {
+      //  var result = [];
+      //  for (var n in t) {
+      //    if( t.hasOwnProperty( n ) ) {
+      //      result.push( new Theme( n, t[n] ) );
+      //    }
+      //  }
+      //  return result;
+      //};
+      //
+      //this.themes = createThemes( base );
+
+      //debugger;
+
+      this.names = function() {
+        return Object.keys( themes );
+      };
+
+      this.theme = function( name ) {
+        return new Theme( themes[name] );
+      };
+    };
+
+    //var selected = 'jet';
+
+    //Themes.themes = createThemes( themes );
+
+    return Themes;
+  })();
+
+  return function ( options ) {
+    return new Themes( options );
   };
 
 } ));

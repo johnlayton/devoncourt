@@ -66,29 +66,22 @@ L.control.time = function ( options ) {
 
 Polymer( 'leaflet-time-control', {
 
+/*
   observe: {
     'minimum': 'rangeChanged',
     'maximum': 'rangeChanged',
     'current': 'currentChanged'
   },
+*/
 
-  rangeChanged : function(){
-    this.dates = [];
-    var count = moment.unix( this.maximum ).diff( moment.unix( this.minimum ), 'days' );
-    for ( var i = 0; i < count; i++ ) {
-      this.dates.push( moment.unix( this.minimum ).add( i, 'days' ) );
-    }
-  },
-
-  currentChanged: function() {
-    console.log( "### Current Date Changed ###" );
-  },
+  //rangeChanged : function(){
+  //},
+  //
+  //currentChanged: function() {
+  //},
 
   containerChanged : function () {
     if ( this.container ) {
-
-      debugger;
-
       this.control = L.control.time( {
         ui : this.$.time
       } );

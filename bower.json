@@ -28,6 +28,8 @@
     "paper-input"           : "polymer/paper-input",
     "paper-progress"        : "polymer/paper-progress",
     "paper-shadow"          : "polymer/paper-shadow",
+    "paper-slider"          : "polymer/paper-slider",
+    "paper-dropdown-menu"   : "polymer/paper-dropdown-menu",
     "kettstreet"            : "johnlayton/kettstreet",
     "leighcourt"            : "johnlayton/leighcourt",
     "astleystreet"          : "johnlayton/astleystreet"

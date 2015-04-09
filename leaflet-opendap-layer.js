@@ -33,9 +33,10 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     map.getPanes().overlayPane.appendChild( canvas );
 
     var config = {
-      canvas  : canvas,
-      fragment: options.fragment,
-      vertex  : options.vertex
+      canvas   : canvas,
+      fragment : options.fragment,
+      vertex   : options.vertex,
+      themes   : createThemes()
     };
     this.overlay = createOverlay( config );
 
@@ -89,6 +90,12 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     this._plot();
   },
 */
+
+  setTheme : function( theme ) {
+    debugger;
+    this.theme = theme;
+    this._update();
+  },
 
   setCurrentTime : function( time ) {
     this._currentTime = time;
@@ -252,7 +259,7 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     };
 
     cache.get( key, function( value ) {
-      console.log( "From cache -> " + value );
+      //console.log( "From cache -> " + value );
       deferred.resolve( process( variable, value.data ) );
     }, function() {
       options.kettstreet.dap( variable, query, function( err, data ){
@@ -260,7 +267,7 @@ L.TileLayer.OpenDAP = L.Class.extend( {
           deferred.reject(new Error(err));
         } else {
           cache.add( key, { data : data } );
-          console.log( "From remote -> " + data );
+          //console.log( "From remote -> " + data );
           deferred.resolve( process( variable, data ) );
         }
       } );
@@ -285,7 +292,10 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     } );
 
     // render as points
-    this.overlay.update( { min: this.options.min || 0 } );
+    this.overlay.update( {
+      min: this.options.min || 0,
+      theme: this.theme
+    } );
     this.overlay.displayPoints( data );
   },
 
@@ -369,7 +379,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     //this._plot();
   }
 
-
 } );
 
 L.layer = function ( options ) {
@@ -385,9 +394,16 @@ Polymer( 'leaflet-opendap-layer', {
   variable : "",
   //date     : moment().unix(),
 
+/*
   observe: {
     'container storage' : 'containerChanged',
-    'current'           : 'currentChanged'
+    'current'           : 'currentChanged',
+    'theme'             : 'themeChanged'
+  },
+*/
+
+  observe: {
+    'container storage' : 'containerChanged',
   },
 
   created: function () {
@@ -413,8 +429,17 @@ Polymer( 'leaflet-opendap-layer', {
   },
 
   currentChanged: function() {
+    //debugger;
     if ( this.container && this.layer) {
       this.layer.setCurrentTime( moment.unix( this.current ) );
+    }
+  },
+
+  themeChanged: function() {
+    //debugger;
+    if ( this.container && this.layer) {
+      //this.layer.setCurrentTime( moment.unix( this.current ) );
+      this.layer.setTheme( this.theme );
     }
   },
 
