@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../core-ajax/core-ajax.html">
-<!--<link rel="import" href="../core-component-page/core-component-page.html">-->
 <link rel="import" href="../leaflet-map/leaflet-import.html">
 
 <link rel="import" href="leaflet-opendap-control.html">
@@ -14,20 +13,14 @@
 
 @element leaflet-opendap-layer
 -->
-<polymer-element name="leaflet-opendap-layer" attributes="url variable legend current theme">
+<polymer-element name="leaflet-opendap-layer" attributes="kettstreet variable current theme">
   <template>
     <style>
-      /*
+/*
       :host {
         display: none;
       }
-      */
-
-      leaflet-opendap-control {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-      }
+*/
     </style>
 
     <script id="fragment" type="x-shader/x-fragment">
@@ -70,12 +63,7 @@
       }
     </script>
 
-    <core-xhr id="xhr"></core-xhr>
-
-    <leaflet-opendap-control theme="{{ theme }}" current="{{ current }}">
-    </leaflet-opendap-control>
-
-    <canvas id="canvas" />
+    <canvas id="canvas"></canvas>
 
     <web-storage storage="{{ storage }}" resource="{{ variable }}" group="OpenDap" >
     </web-storage>
@@ -91,9 +79,8 @@
   <script src="../lodash/dist/lodash.js"></script>
   <script src="../moment/moment.js"></script>
 
-  <script src="../kettstreet/kettstreet.js"></script>
-
   <script src="./webgl-overlay.js"></script>
+
   <script src="./leaflet-opendap-layer.js"></script>
 
 </polymer-element>

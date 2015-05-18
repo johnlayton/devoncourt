@@ -133,32 +133,46 @@
   };
 
   var Theme = (function(){
-    var Theme = function( colours ) {
+    var Theme = function( name, colours ) {
 
       //var name = name;
       var colours = colours;
+      var name = name;
       var options = {};
 
-      var findLast = function( arr, otherwise, callback ) {
-        for ( var i = arr.length - 1; i > 0; --i ) {
-          if( callback( arr[i] ) ) {
-            return arr[i];
-          }
-        }
-        return otherwise;
-      };
+      //var findLast = function( arr, otherwise, callback ) {
+      //  for ( var i = arr.length - 1; i > 0; --i ) {
+      //    if( callback( arr[i] ) ) {
+      //      return arr[i];
+      //    }
+      //  }
+      //  return otherwise;
+      //};
 
       this.color = function( i ) {
         if ( i > ( options.min || 0 ) ) {
-          var res = findLast( colours,  [0.0, 0.0, 0.0], function( ent ) {
+          var res = _.findLast( colours, function( ent ) {
               return ent.index < ( i / 40 );
-          } );
-          //console.log( "Color :: " + res );
-          return res.rgb; //.concat([0.6]);
+            } ).rgb || [0.0, 0.0, 0.0];
+          return res;
         }
         else {
           return [0.0, 0.0, 0.0];
         }
+
+        //if ( i > ( options.min || 0 ) ) {
+        //  var res = _.findLast( colours,  { "rgb" : [0.0, 0.0, 0.0] }, function( ent ) {
+        //      return ent.index < ( i / 40 );
+        //  } );
+        //  //console.log( "Color :: " + res );
+        //  var u = res.rgb; //.concat([0.6]);
+        //  console.log( res );
+        //  console.log( u );
+        //  return u;
+        //}
+        //else {
+        //  return [0.0, 0.0, 0.0];
+        //}
       };
 
 
@@ -213,7 +227,7 @@
       };
 
       this.theme = function( name ) {
-        return new Theme( themes[name] );
+        return new Theme( name, themes[name] );
       };
     };
 

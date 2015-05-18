@@ -1,0 +1,33 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="leaflet-themes-control.html">
+<link rel="import" href="leaflet-opendap-provider.html">
+<link rel="import" href="table-opendap.html">
+
+<polymer-element name="viewer-opendap" attributes="url variable step" >
+  <template>
+    <style>
+      /*
+        :host {
+          display: none;
+        }
+      */
+    </style>
+
+    <leaflet-opendap-provider url="{{ url }}" kettstreet="{{ kettstreet }}">
+    </leaflet-opendap-provider>
+
+    <leaflet-themes-control theme="{{ theme }}">
+      <content id="themes" select="leaflet-theme"></content>
+    </leaflet-themes-control>
+
+    <table-opendap variable="{{ variable }}" kettstreet="{{ kettstreet }}"
+                   theme="{{ theme }}" step="{{ step }}">
+    </table-opendap>
+
+  </template>
+
+  <script src="./viewer-opendap.js"></script>
+
+</polymer-element>
+

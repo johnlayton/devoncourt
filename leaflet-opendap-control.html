@@ -12,35 +12,41 @@
       }
       */
 
-      /*.threshold-slider {*/
-        /*position: absolute;*/
-        /*top: 10px;*/
-        /*right: 10px;*/
-        /*background: rgba(255, 255, 255, 0.4);*/
-        /*border-radius: 10px;*/
-        /*border-style: solid;*/
-        /*border-color: #7b98bc;*/
-        /*padding: 2px;*/
-        /*font-size: 20px;*/
-        /*height: 80%;*/
-        /*width: 30px;*/
-        /*line-height: 26px;*/
-        /*-webkit-appearance: slider-vertical;*/
-      /*}*/
+/*
+      .threshold-slider {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 10px;
+        border-style: solid;
+        border-color: #7b98bc;
+        padding: 2px;
+        font-size: 20px;
+        height: 80%;
+        width: 30px;
+        line-height: 26px;
+        -webkit-appearance: slider-vertical;
+      }
+*/
 
-      /*#time {*/
-        /*position: absolute;*/
-        /*bottom: 10px;*/
-        /*right: 10px;*/
-        /*height: 75px;*/
-        /*width: 250px;*/
-        /*background: white;*/
-        /*z-index: 999;*/
-      /*}*/
+/*
+      #time {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        height: 75px;
+        width: 250px;
+        background: white;
+        z-index: 999;
+      }
+*/
 
       :host {
         display: block;
-        position: relative;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
         font-size: 16px;
         box-sizing: border-box;
         min-width: 7em;
@@ -53,19 +59,17 @@
         z-index: 0;
       }
 
-      /*:host /deep/ div {*/
-        /*background-color: white;*/
-      /*}*/
+/*
+      :host /deep/ div {
+        background-color: white;
+      }
+*/
 
-      :host /deep/ paper-dropdown #scroller {
-        box-sizing: border-box;
-        padding: 8px;
+/*
+      .with-margin {
         margin: 12px;
       }
-
-      /*.with-margin {*/
-      /*margin: 12px;*/
-      /*}*/
+*/
     </style>
 
     <!--
@@ -78,6 +82,28 @@
       </leaflet-time-control>
 
       <leaflet-themes-control theme="{{ theme }}">
+
+        <content select="leaflet-theme"></content>
+
+        <!--
+                <leaflet-theme label="head fire intensity" legend="Fire Intensity/Readiness Level" >
+                  <leaflet-colour name="1" description="1 (0 - 500 Kw/m)"
+                                  minimum="0" maximum="500" rgb="[56,168,0]"></leaflet-colour>
+                  <leaflet-colour name="2" description="2 (500 - 2,000 Kw/m)"
+                                  minimum="500" maximum="2000" rgb="[0,197,255]"></leaflet-colour>
+                  <leaflet-colour name="3" description="3 (2,000 - 4,000 Kw/m)"
+                                  minimum="2000" maximum="4000" rgb="[255,255,0]"></leaflet-colour>
+                  <leaflet-colour name="4" description="4 (4,000 - 10,000 Kw/m)"
+                                  minimum="4000" maximum="10000" rgb="[255,170,0]"></leaflet-colour>
+                  <leaflet-colour name="5" description="5 (10,000 - 30,000 Kw/m)"
+                                  minimum="10000" maximum="30000" rgb="[255,0,0]"></leaflet-colour>
+                  <leaflet-colour name="6" description="6 (> 30,000 Kw/m)"
+                                  minimum="30000" maximum="20000000" rgb="[115,0,0]"></leaflet-colour>
+                  <leaflet-colour name="7" description="Out of Range"
+                                  minimum="20000000" maximum="99999999" rgb="[0,0,255]"></leaflet-colour>
+                </leaflet-theme>
+        -->
+
       </leaflet-themes-control>
 
     </paper-shadow>

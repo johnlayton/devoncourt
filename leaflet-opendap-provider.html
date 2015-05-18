@@ -1,0 +1,28 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../core-ajax/core-ajax.html">
+
+<!--
+##### Example
+
+<leaflet-opendap-provider url="...">
+</leaflet-opendap-provider>
+
+@element leaflet-opendap-layer
+-->
+<polymer-element name="leaflet-opendap-provider" attributes="url kettstreet">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+
+    <core-xhr id="xhr"></core-xhr>
+
+  </template>
+
+  <script src="../kettstreet/kettstreet.js"></script>
+  <script src="./leaflet-opendap-provider.js"></script>
+
+</polymer-element>

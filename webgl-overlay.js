@@ -132,8 +132,6 @@
     var squareVertexColorBuffer;
 
     var initBuffers = function( options, data, indicies ) {
-
-
       if ( indicies ) {
         squareVertexPositionBuffer = squareVertexPositionBuffer || gl.createBuffer();
         gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexPositionBuffer );
@@ -160,12 +158,12 @@
         gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
         colors = [];
         for ( var i = 0, len = indicies.length; i < len; i++ ) {
-          var col = options.theme.color( data[indicies[i]][2] );
+          var col = options.colour( data[indicies[i]][2] );
           colors.push( col[0] / 255 );
           colors.push( col[1] / 255 );
           colors.push( col[2] / 255 );
           //colors.push( col[3] );
-          colors.push( 0.6 );
+          colors.push( options.opacity || 0.5 );
         }
 
         gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
@@ -192,20 +190,13 @@
         gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
         colors = [];
 
-        //console.log( options.theme );
-
         for ( var i = 0, len = data.length; i < len; i++ ) {
-          //debugger;
-
-          var col = options.theme ? options.theme.color( data[i][2] ) : rgb( options, data[i][2] );
-
-          //console.log( col );
-
+          var col = options.colour( data[i][2] );
           colors.push( col[0] / 255 );
           colors.push( col[1] / 255 );
           colors.push( col[2] / 255 );
           //colors.push( col[3] );
-          colors.push( 0.6 );
+          colors.push( options.opacity || 0.5 );
         }
 
         gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
@@ -232,24 +223,6 @@
       drawArrays( gl );
     };
 
-    var rgb = function ( options, i ) {
-      var jet = [{"index" : 0, "rgb" : [0, 0, 131]},
-                 {"index" : 0.125, "rgb" : [0, 60, 170]},
-                 {"index" : 0.375, "rgb" : [5, 255, 255]},
-                 {"index" : 0.625, "rgb" : [255, 255, 0]},
-                 {"index" : 0.875, "rgb" : [250, 0, 0]}];
-
-      if ( i > ( options.min || 0 ) ) {
-        var res = _.findLast( jet, function( ent ) {
-          return ent.index < ( i / 40 );
-        } ).rgb || [0.0, 0.0, 0.0];
-        return res;
-      }
-      else {
-        return [0.0, 0.0, 0.0];
-      }
-    };
-
     var Overlay = function ( options ) {
       this.options = options;
 
@@ -261,20 +234,43 @@
     };
 
     Overlay.prototype.clear = function () {
-      //console.log( "clear" );
+      console.log( "clear" );
     };
 
     Overlay.prototype.addPoint = function ( x, y, val ) {
-      //console.log( "addPoint" + arguments );
+      console.log( "addPoint" + arguments );
     };
 
     Overlay.prototype.update = function ( options ) {
+
       if ( options && options.min ) {
         this.options.min = options.min;
       }
       if ( options && options.theme ) {
-        this.options.theme = options.theme;
+
+        this.options.colour = options.theme.colour;
+        //this.options.colour = options.theme ? options.theme.color : function ( i ) {
+        //  var jet = [{"index" : 0,     "rgb" : [0, 0, 131]},
+        //             {"index" : 0.125, "rgb" : [0, 60, 170]},
+        //             {"index" : 0.375, "rgb" : [5, 255, 255]},
+        //             {"index" : 0.625, "rgb" : [255, 255, 0]},
+        //             {"index" : 0.875, "rgb" : [250, 0, 0]}];
+        //
+        //  if ( i > ( options.min || 0 ) ) {
+        //    var res = _.findLast( jet, function( ent ) {
+        //        return ent.index < ( i / 40 );
+        //      } ).rgb || [0.0, 0.0, 0.0];
+        //    return res;
+        //  }
+        //  else {
+        //    return [0.0, 0.0, 0.0];
+        //  }
+        //};
       }
+      if ( options && options.opacity ) {
+        this.options.opacity = options.opacity;
+      }
+      console.log( "Update" );
     };
 
     Overlay.prototype.resize = function () {
@@ -296,6 +292,7 @@
     };
 
     Overlay.prototype.displayPoints = function ( data) {
+      console.log( "displayPoints" );
       initBuffers( this.options, data );
       drawScene( function( gl ) {
         gl.drawArrays( gl.POINTS, 0, squareVertexPositionBuffer.numItems );
@@ -303,6 +300,7 @@
     };
 
     Overlay.prototype.displayTriangles = function ( data, rows, cols) {
+      console.log( "displayTriangles" );
       initBuffers( this.options, data, create_indices( rows, cols ) );
       drawScene( function( gl ) {
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );
@@ -310,6 +308,7 @@
     };
 
     Overlay.prototype.display = function ( data, rows, cols) {
+      console.log( "display" );
       initBuffers( this.options, data, create_indices( rows, cols ) );
       drawScene(function( gl ) {
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems );

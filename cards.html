@@ -1,0 +1,163 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<polymer-element name="card-service" attributes="cards">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+  </template>
+  <script>
+    Polymer( 'card-service', {
+      created : function () {
+        this.cards = [
+          {"title" : "Title A", "description" : "Description A"},
+          {"title" : "Title B", "description" : "Description B"},
+          {"title" : "Title C", "description" : "Description C"}
+        ];
+      }
+    } );
+  </script>
+</polymer-element>
+
+<polymer-element name="in-tray" attributes="name cards">
+  <template>
+    <style>
+      /*:host {*/
+      /*display: none;*/
+      /*}*/
+      div {
+        height: 200px;
+        width: 500px;
+        margin: 20px;
+        border: 1px solid blue;
+      }
+    </style>
+
+    <card-service cards="{{ cards }}"></card-service>
+
+    <div horizontal layout>
+
+      <template repeat="{{ card in cards }}">
+
+        <in-card title="{{ card.title }}">
+          {{ card.description }}
+
+          <!--<content id="copy" select="in-copy"></content>-->
+          <!--<in-copy>Copy Stuff</in-copy>-->
+
+          <content id="copy" select="in-copy"></content>
+
+        </in-card>
+
+
+      </template>
+
+      <!--<content select="in-meta"></content>-->
+
+    </div>
+
+  </template>
+  <script>
+    "use strict";
+
+    Polymer( "in-tray", {
+
+      domReady : function () {
+        debugger;
+      },
+
+      ready : function () {
+//        debugger;
+      },
+
+      renderTemplate: function() {
+        debugger;
+      }
+
+    } );
+  </script>
+</polymer-element>
+
+<polymer-element name="in-card">
+  <template>
+    <style>
+      /*:host {*/
+      /*display: none;*/
+      /*}*/
+      div {
+        height: 100px;
+        width: 80px;
+        margin: 20px;
+        border: 1px solid red;
+      }
+    </style>
+    <div>
+
+      <content></content>
+
+    </div>
+  </template>
+  <script>
+    "use strict";
+
+    Polymer( "in-card", {
+
+      domReady : function () {
+      },
+
+      ready : function () {
+//        debugger;
+
+      }
+
+    } );
+  </script>
+</polymer-element>
+
+<polymer-element name="in-meta">
+  <template>
+    <style>
+      /*:host {*/
+      /*display: none;*/
+      /*}*/
+      div {
+        border: 1px solid green;
+      }
+    </style>
+    <div>
+
+      <content></content>
+
+    </div>
+  </template>
+  <script>
+    "use strict";
+
+    Polymer( "in-meta", {} );
+  </script>
+</polymer-element>
+
+<polymer-element name="in-copy">
+  <template>
+    <style>
+      /*:host {*/
+      /*display: none;*/
+      /*}*/
+      div {
+        border: 1px solid pink;
+      }
+    </style>
+    <div>
+
+      <content></content>
+
+    </div>
+  </template>
+  <script>
+    "use strict";
+
+    Polymer( "in-copy", {} );
+  </script>
+</polymer-element>

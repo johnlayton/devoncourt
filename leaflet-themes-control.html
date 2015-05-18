@@ -3,10 +3,10 @@
 <link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../paper-dropdown/paper-dropdown.html">
 <link rel="import" href="../core-menu/core-menu.html">
+<link rel="import" href="../core-item/core-item.html">
 <link rel="import" href="../paper-item/paper-item.html">
 
-
-<polymer-element name="leaflet-themes-control" attributes="theme">
+<polymer-element name="leaflet-themes-control" attributes="theme colours">
   <template>
     <style>
       /*
@@ -28,23 +28,232 @@
         cursor: pointer;
         z-index: 0;
       }
+
+      :host /deep/ paper-dropdown #scroller {
+        box-sizing: border-box;
+        padding: 8px;
+        margin: 12px;
+      }
+
+      :host .colour {
+        background-color: #4271ae;
+        height: 25px;
+        width: 125px;
+      }
     </style>
 
-    <div horizontal center-justified layout>
+    <div vertical center layout>
+
+      <div vertical layout>
+        <template repeat="{{ colour in colours }}">
+          <div class="colour" style="background-color: {{ colour.rgb | toColour }}">
+            {{ colour.name }}
+          </div>
+        </template>
+      </div>
+
       <paper-dropdown-menu id="dropdown" label="Select a colour theme">
         <paper-dropdown class="dropdown" valign="bottom">
-          <core-menu class="menu" on-core-select="{{ selectTheme }}">
+          <core-menu id="menu" class="menu" on-core-select="{{ selectTheme }}">
+<!--
             <template repeat="{{ names(themes) }}">
               <paper-item name="{{}}">{{}}</paper-item>
             </template>
+-->
+            <!--<shadow></shadow>-->
+            <content id="themes" select="leaflet-theme"></content>
+
           </core-menu>
         </paper-dropdown>
       </paper-dropdown-menu>
+
+      <!--<content></content>-->
+      <!--<leaflet-theme-legend>-->
+        <!---->
+      <!--</leaflet-theme-legend>-->
     </div>
 
   </template>
 
   <script src="./webgl-themes.js"></script>
-  <script src="./leaflet-opendap-layer.js"></script>
+  <!--<script src="./leaflet-themes-control.js"></script>-->
+
+  <script>
+    "user strict"
+
+    Polymer( 'leaflet-themes-control', {
+
+      colours : [],
+
+      toColour: function( value ) {
+        if ( this.theme ) {
+//          return "rgb(" + this.theme.colour( parseFloat( value ) ).join(",")  + ")"
+          return "rgb(" + value.join(",")  + ")"
+        } else {
+          return 'lightblue';
+        }
+      },
+
+      names : function( themes ) {
+        return themes.names();
+      },
+
+      ready : function() {
+      },
+
+//      contentChanged : function() {
+//      },
+
+      selectTheme: function( evt, detail ) {
+        var item = this.$.menu.items[ this.$.menu.selected ];
+//        this.theme = {
+//          colour : item.colour.bind( item )
+//        };
+        this.theme = item;
+      },
+
+      themeChanged : function() {
+        console.log( this.theme.children );
+//        this.colours = this.theme.children;
+//        debugger;
+//        this.colours = [].push( this.theme.children.map( function( col ) { return { name : col.name } } ) );
+//        console.log( this.colours )
+        this.colours = this.theme.children.array();
+      },
+
+      created : function () {
+        this.themes = createThemes();
+      }
+
+    } );
+  </script>
+</polymer-element>
+
+<!--
+<polymer-element name="my-theme" extends="core-item" noscript>
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        height: 40px;
+        white-space: nowrap;
+      }
+      :host(.core-selected) {
+        font-weight: bold;
+      }
+      :host::shadow core-icon {
+        margin: 0 16px 0 4px;
+      }
+      :host::shadow ::content > a {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
+    <paper-ripple fit></paper-ripple>
+    <shadow></shadow>
+  </template>
+</polymer-element>
+
+<polymer-element name="my-theme-again" attributes="label icon src" noscript>
+  <template>
+    <core-item src="{{src}}" icon="{{icon}}" label="{{label}}">
+      <paper-ripple fit></paper-ripple>
+    </core-item>
+  </template>
+</polymer-element>
+-->
+
+<polymer-element name="leaflet-theme" extends="core-item" attributes="title">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        height: 40px;
+        white-space: nowrap;
+      }
+
+      :host(.core-selected) {
+        font-weight: bold;
+      }
+
+      :host::shadow core-icon {
+        margin: 0 16px 0 4px;
+      }
+
+      :host::shadow ::content > a {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
+
+    <paper-ripple fit></paper-ripple>
+
+    <shadow></shadow>
+
+    <content id="color" select="leaflet-colour"></content>
+  </template>
+
+  <script src="../lodash/dist/lodash.js"></script>
+  <script>
+    Polymer( 'leaflet-theme', {
+
+      titleChanged : function() {
+        this.label = this.title;
+      },
+
+      created : function () {
+        this.label = this.title;
+      },
+
+      ready : function () {
+      },
+
+      colour : function( i ) {
+        var colour = _.find( this.children, function( child ) {
+          return child.minimum <= i && child.maximum > i;
+        } );
+        if ( colour ) {
+          return colour.rgb;
+        } else {
+          return [0,0,0];
+        }
+      }
+
+    } );
+  </script>
+</polymer-element>
+
+<polymer-element name="leaflet-colour" attributes="name description maximum minimum rgb">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+  </template>
+
+  <script>
+    Polymer( 'leaflet-colour', {
+
+      minimum : 0,
+      maximum : 0,
+      rgb     : [0, 0, 0]
+
+/*
+      created : function () {
+        console.log( "leaflet-colour created" );
+      }
+*/
+
+    } );
+  </script>
 
 </polymer-element>

@@ -1,0 +1,34 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="leaflet-opendap-layer.html">
+<link rel="import" href="leaflet-opendap-provider.html">
+<link rel="import" href="leaflet-opendap-control.html">
+
+<polymer-element name="leaflet-opendap" attributes="url variable">
+  <template>
+    <style>
+/*
+      :host {
+        display: none;
+      }
+*/
+    </style>
+
+    <leaflet-opendap-provider url="{{ url }}" kettstreet="{{ kettstreet }}">
+    </leaflet-opendap-provider>
+
+    <!--kettstreet="{{ kettstreet }}"-->
+    <leaflet-opendap-control id="control" current="{{ current }}" theme="{{ theme }}">
+      <content id="themes" select="leaflet-theme"></content>
+    </leaflet-opendap-control>
+
+    <leaflet-opendap-layer id="layer" variable="{{ variable }}" kettstreet="{{ kettstreet }}"
+                           current="{{ current }}" theme="{{ theme }}">
+    </leaflet-opendap-layer>
+
+  </template>
+
+  <script src="leaflet-opendap.js"></script>
+
+</polymer-element>
+

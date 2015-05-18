@@ -3,7 +3,7 @@
 L.TileLayer.OpenDAP = L.Class.extend( {
 
   options: {
-    opacity    : 1,
+    opacity    : 0.5,
     minZoom    : 0,
     maxZoom    : 18,
     tileSize   : 256,
@@ -15,7 +15,7 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     L.setOptions( this, options );
     this._url = url;
     this._currentTime = moment();
-    this._currentThreshold = 0;
+    //this._currentThreshold = 0;
   },
 
   onAdd: function ( map ) {
@@ -35,9 +35,9 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     var config = {
       canvas   : canvas,
       fragment : options.fragment,
-      vertex   : options.vertex,
-      themes   : createThemes()
+      vertex   : options.vertex
     };
+    //themes   : createThemes()
     this.overlay = createOverlay( config );
 
     this.canvas = canvas;
@@ -45,19 +45,24 @@ L.TileLayer.OpenDAP = L.Class.extend( {
     //this._createTimeSlider();
     //this._createThresholdSlider();
 
+    this._update = _.debounce( this._hiddenUpdate, 20 );
+
     map.on( "move", this._update, this );
+    map.on( "resize", this._update, this );
 
     /* hide layer on zoom, because it doesn't animate zoom */
     map.on( "zoomstart", this._hide, this );
     map.on( "zoomend", this._show, this );
-    map.on( "resize", this._update, this );
 
     this.redraw();
   },
 
   onRemove: function ( map ) {
     map.getPanes().overlayPane.removeChild( this.canvas );
+
     map.off( "move", this._update, this );
+    map.off( "resize", this._update, this );
+
     map.off( "zoomstart", this._hide, this );
     map.off( "zoomend", this._show, this );
   },
@@ -92,7 +97,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 */
 
   setTheme : function( theme ) {
-    debugger;
     this.theme = theme;
     this._update();
   },
@@ -113,8 +117,10 @@ L.TileLayer.OpenDAP = L.Class.extend( {
   _reset: function () {
 	},
 
-  //_resizeRequest: undefined,
-	_update: function () {
+  _hiddenUpdate : function() {
+    console.log( "Hidden Update" );
+
+    this._hide();
 
     var map = this.map,
         bounds = map.getPixelBounds(),
@@ -143,12 +149,6 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 		        bounds.min.divideBy(tileSize)._floor(),
 		        bounds.max.divideBy(tileSize)._floor());
 
-/*
-
-		if (this.options.unloadInvisibleTiles || this.options.reuseTiles) {
-			this._removeOtherTiles(tileBounds);
-		}
-*/
     Q.allSettled( this._requestTiles( tileBounds ) )
       .then( this._render.bind( this ) );
 	},
@@ -258,20 +258,23 @@ L.TileLayer.OpenDAP = L.Class.extend( {
       return result;
     };
 
-    cache.get( key, function( value ) {
-      //console.log( "From cache -> " + value );
-      deferred.resolve( process( variable, value.data ) );
-    }, function() {
-      options.kettstreet.dap( variable, query, function( err, data ){
-        if ( err ) {
-          deferred.reject(new Error(err));
-        } else {
-          cache.add( key, { data : data } );
-          //console.log( "From remote -> " + data );
-          deferred.resolve( process( variable, data ) );
-        }
+    cache.get( key,
+      function ( value /* found */ ) {
+        console.log( "From cache " + key + " -> " + value );
+        deferred.resolve( process( variable, value.data ) );
+      },
+      function ( /* missed */ ) {
+        options.provider.dap( variable, query, function ( err, data ) {
+          if ( err ) {
+            deferred.reject( new Error( err ) );
+          }
+          else {
+            cache.add( key, { data : data } );
+            //console.log( "From remote " + key + " -> " + data );
+            deferred.resolve( process( variable, data ) );
+          }
+        } );
       } );
-    } );
 
     return deferred.promise;
   },
@@ -286,17 +289,28 @@ L.TileLayer.OpenDAP = L.Class.extend( {
 
     // map the data to screen position
     data = data.map( function( a ) {
-      var latlng = new L.LatLng( a[0], a[1] ),
-          point = map.latLngToContainerPoint( latlng );
-      return [Math.floor( point.x ), Math.floor( point.y ), a[2]];
+      if ( isNaN(a[0]) || isNaN(a[1]) || isNaN(a[2]) ) {
+        console.log( "[" + a[0] + "," + a[1] + "] = " + a[2] );
+        return [];
+      } else {
+        var latlng = new L.LatLng( a[0], a[1] ),
+            point = map.latLngToContainerPoint( latlng );
+        var res = [Math.floor( point.x ), Math.floor( point.y ), a[2]];
+       return res;
+      }
+
     } );
 
-    // render as points
-    this.overlay.update( {
-      min: this.options.min || 0,
-      theme: this.theme
-    } );
-    this.overlay.displayPoints( data );
+    if ( this.theme ) {
+      this.overlay.update( {
+                             min     : this.options.min || 0,
+                             opacity : this.options.opacity || 0.5,
+                             theme   : this.theme
+                           } );
+      this.overlay.displayPoints( data );
+    }
+
+    this._show();
   },
 
 	_getTileUrl: function (tilePoint) {
@@ -390,20 +404,10 @@ L.layer.opendap = function ( url, options ) {
 
 Polymer( 'leaflet-opendap-layer', {
 
-  url      : "",
   variable : "",
-  //date     : moment().unix(),
-
-/*
-  observe: {
-    'container storage' : 'containerChanged',
-    'current'           : 'currentChanged',
-    'theme'             : 'themeChanged'
-  },
-*/
 
   observe: {
-    'container storage' : 'containerChanged',
+    'container storage kettstreet' : 'containerChanged'
   },
 
   created: function () {
@@ -416,35 +420,30 @@ Polymer( 'leaflet-opendap-layer', {
     return moment.unix( value ).format("HH:mm DD-MMM-YYYY");
   },
 
-  provider: function( xhr ) {
-    return function( url, callback ) {
-      var options = {
-        url: url, responseType: 'arraybuffer',
-        callback: function ( buffer ) {
-          callback( undefined, buffer );
-        }
-      };
-      xhr.request( options );
-    };
-  },
+  //currentChanged : function() {
+  //  console.log( arguments );
+  //},
+  //
+  //themeChanged : function() {
+  //  console.log( arguments );
+  //},
 
   currentChanged: function() {
-    //debugger;
     if ( this.container && this.layer) {
+      console.log( "leaflet-opendap-layer update current" );
       this.layer.setCurrentTime( moment.unix( this.current ) );
     }
   },
 
   themeChanged: function() {
-    //debugger;
     if ( this.container && this.layer) {
-      //this.layer.setCurrentTime( moment.unix( this.current ) );
+      console.log( "leaflet-opendap-layer update theme" );
       this.layer.setTheme( this.theme );
     }
   },
 
   containerChanged: function () {
-    if ( this.container && this.storage) {
+    if ( this.container && this.storage && this.kettstreet ) {
       var options = {
         cache     : this.storage,
         variable  : this.variable,
@@ -454,11 +453,7 @@ Polymer( 'leaflet-opendap-layer', {
         },
         fragment  : this.$.fragment,
         vertex    : this.$.points,
-        kettstreet: kettstreet( {
-          url       : this.url,
-          provider  : this.provider( this.$.xhr )
-          //cache     : this.storage
-        } )
+        provider  : this.kettstreet
       };
       this.layer = new L.layer.opendap( this.url, options );
       this.container.addLayer( this.layer );

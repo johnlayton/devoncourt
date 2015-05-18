@@ -74,18 +74,24 @@ Polymer( 'leaflet-time-control', {
   },
 */
 
-  //rangeChanged : function(){
-  //},
-  //
-  //currentChanged: function() {
-  //},
+/*
+  rangeChanged : function(){
+  },
+ */
+
+  currentChanged: function() {
+    //this.favorite = !this.favorite;
+    this.fire('current-changed');
+  },
 
   containerChanged : function () {
     if ( this.container ) {
+/*
       this.control = L.control.time( {
         ui : this.$.time
       } );
       this.container.addControl( this.control );
+*/
     }
   },
 
