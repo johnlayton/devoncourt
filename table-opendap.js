@@ -87,7 +87,7 @@ Polymer( 'table-opendap', {
         console.log( step.lng );
         console.log( "**************************" );
 
-        debugger;
+        //debugger;
 
         var query = {
           time : {

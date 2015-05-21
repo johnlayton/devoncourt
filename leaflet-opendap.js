@@ -41,5 +41,4 @@ Polymer( 'leaflet-opendap', {
     this.onMutation(this, this.containerChanged);
   }
 
-
 } ) ;

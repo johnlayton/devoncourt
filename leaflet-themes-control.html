@@ -101,9 +101,6 @@
       ready : function() {
       },
 
-//      contentChanged : function() {
-//      },
-
       selectTheme: function( evt, detail ) {
         var item = this.$.menu.items[ this.$.menu.selected ];
 //        this.theme = {
@@ -113,7 +110,7 @@
       },
 
       themeChanged : function() {
-        console.log( this.theme.children );
+//        console.log( this.theme.children );
 //        this.colours = this.theme.children;
 //        debugger;
 //        this.colours = [].push( this.theme.children.map( function( col ) { return { name : col.name } } ) );
@@ -217,6 +214,9 @@
       },
 
       colour : function( i ) {
+
+//        debugger;
+
         var colour = _.find( this.children, function( child ) {
           return child.minimum <= i && child.maximum > i;
         } );
@@ -246,12 +246,6 @@
       minimum : 0,
       maximum : 0,
       rgb     : [0, 0, 0]
-
-/*
-      created : function () {
-        console.log( "leaflet-colour created" );
-      }
-*/
 
     } );
   </script>

@@ -21,13 +21,16 @@ Polymer( 'leaflet-layers-control', {
     if ( this.container ) {
       this.control = L.control.layers();
       this.container.addControl( this.control );
+      //this.container.on('layeradd', function( e ) {
+      //  this.addLayer( e.layer );
+      //}, this);
       this.registerMapOnChildren();
     }
   },
 
   registerMapOnChildren: function() {
     for (var i = 0; i < this.children.length; i++) {
-      this.children[i].container = this;
+      this.children[i].container = this.container;
     }
     this.onMutation(this, this.registerMapOnChildren);
   },
@@ -40,7 +43,7 @@ Polymer( 'leaflet-layers-control', {
 
   addLayer: function( layer ) {
     for ( var i = 0; i < this.children.length; i++ ) {
-      if ( layer.url.match( this.children[i].url ) ) {
+      if ( layer.url && layer.url.match( this.children[i].url ) ) {
         this.container.addLayer( layer );
         this.control.addOverlay( layer, this.children[i].name );
       }

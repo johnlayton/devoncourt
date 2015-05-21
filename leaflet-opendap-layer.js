@@ -462,7 +462,7 @@ Polymer( 'leaflet-opendap-layer', {
 
   detached: function () {
     if ( this.container && this.layer ) {
-      this.container.removeControl( this.layer );
+      this.container.removeLayer( this.layer );
     }
   }
 } );

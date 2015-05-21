@@ -1,0 +1,68 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../leaflet-map/leaflet-import.html">
+
+<link rel="import" href="../core-ajax/core-ajax.html">
+<link rel="import" href="../leaflet-map/leaflet-map.html">
+<link rel="import" href="../leaflet-map/leaflet-marker.html">
+
+
+<!--
+
+##### Example
+
+	<leaflet-geojson-feature-layer> </leaflet-geojson-feature-layer>
+
+##### Example
+
+	<leaflet-geojson-feature-layer>
+	</leaflet-geojson-feature-layer>
+
+@element leaflet-opendap-control
+-->
+<polymer-element name="leaflet-geojson-feature-layer" attributes="name url icon size popup">
+
+  <template>
+    <style>
+/*
+      :host {
+        display: none;
+      }
+*/
+    </style>
+
+    <core-xhr id="xhr"></core-xhr>
+
+<!--
+    <content id="template" select="leaflet-geojson-marker-template">
+
+    </content>
+-->
+
+  </template>
+
+  <script src="leaflet-geojson-feature-layer.js"></script>
+
+</polymer-element>
+
+<polymer-element name="leaflet-geojson-marker-template">
+  <template>
+    <style>
+      /*
+          :host {
+            display: none;
+          }
+      */
+    </style>
+
+    <!--<content select="*"></content>-->
+    <!--<template id="popup" is="auto-binding" bind="{{ properties }}">-->
+      <!--<h4>{{ properties.VehicleType }}</h4>-->
+    <!--<template>-->
+
+  </template>
+
+
+  <!--<script src="../mustache/mustache.js"></script>-->
+  <script src="leaflet-geojson-marker-template.js"></script>
+
+</polymer-element>
