@@ -1,12 +1,4 @@
-"user strict"
-
-PolymerExpressions.prototype.formatJson = function ( input ) {
-  return JSON.stringify( input, null, ' ' );
-};
-
-PolymerExpressions.prototype.formatDate = function ( input ) {
-  return new Date( input );
-};
+"use strict";
 
 Polymer( 'leaflet-geojson-feature-layer', {
 
@@ -27,12 +19,9 @@ Polymer( 'leaflet-geojson-feature-layer', {
       var icon = this.icon;
       var size = this.size;
 
-      this.layer = L.layerGroup();
-      this.container.addLayer( this.layer );
-
       this.$.xhr.request( { url : this.url, responseType: 'json',
         callback: function ( data ) {
-          this.layer.addLayer( L.geoJson( data, {
+          this.layer = L.geoJson( data, {
             onEachFeature: function ( feature, layer )
             {
               if ( feature.properties )
@@ -53,7 +42,11 @@ Polymer( 'leaflet-geojson-feature-layer', {
                 icon: L.icon( { iconUrl: icon, iconSize: size } )
               } );
             }
-          } ) );
+          } );
+
+          this.layer.url = this.url;
+          this.container.addLayer( this.layer );
+
         }.bind( this )
       } );
 

@@ -1,4 +1,4 @@
-"user strict"
+"use strict";
 
 L.Control.Time = L.Control.extend( {
 

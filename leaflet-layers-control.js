@@ -1,10 +1,11 @@
-"user strict"
+"use strict";
 
 Polymer( 'leaflet-layers-control', {
 
   created : function () {
   },
 
+/*
   ready : function () {
     var observer = new MutationObserver(function(mutations) {
     }.bind(this));
@@ -16,14 +17,15 @@ Polymer( 'leaflet-layers-control', {
     }
 
   },
+*/
 
   containerChanged : function () {
     if ( this.container ) {
       this.control = L.control.layers();
       this.container.addControl( this.control );
-      //this.container.on('layeradd', function( e ) {
-      //  this.addLayer( e.layer );
-      //}, this);
+      this.container.on('layeradd', function( e ) {
+        this.addLayer( e.layer );
+      }, this);
       this.registerMapOnChildren();
     }
   },
@@ -43,8 +45,9 @@ Polymer( 'leaflet-layers-control', {
 
   addLayer: function( layer ) {
     for ( var i = 0; i < this.children.length; i++ ) {
-      if ( layer.url && layer.url.match( this.children[i].url ) ) {
-        this.container.addLayer( layer );
+      if ( ( layer.url && layer.url.match( this.children[i].url ) ) ||
+           ( layer._url && layer._url.match( this.children[i].url ) ) ) {
+        //this.container.addLayer( layer );
         this.control.addOverlay( layer, this.children[i].name );
       }
     }

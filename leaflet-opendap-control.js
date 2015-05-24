@@ -1,4 +1,4 @@
-"user strict"
+"use strict";
 
 Polymer( 'leaflet-opendap-control', {
 

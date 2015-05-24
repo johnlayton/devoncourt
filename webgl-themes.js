@@ -1,3 +1,5 @@
+"use strict";
+
 (function ( root, factory ) {
   if ( typeof exports === 'object' ) {
     module.exports = factory();
@@ -6,7 +8,7 @@
     define( [], factory );
   }
   else {
-    createThemes = factory();
+    root.createThemes = factory();
   }
 }( this, function () {
 

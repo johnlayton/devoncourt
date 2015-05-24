@@ -33,6 +33,7 @@
     "paper-dropdown-menu"   : "polymer/paper-dropdown-menu",
     "kettstreet"            : "johnlayton/kettstreet",
     "leighcourt"            : "johnlayton/leighcourt",
-    "astleystreet"          : "johnlayton/astleystreet"
+    "astleystreet"          : "johnlayton/astleystreet",
+    "leaflet.markercluster" : "0.4.0"
   }
 }
