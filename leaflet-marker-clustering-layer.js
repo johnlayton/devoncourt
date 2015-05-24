@@ -27,7 +27,7 @@
 
       var self = this;
       this._clusters = L.markerClusterGroup ( {
-        maxClusterRadius : 120,
+        maxClusterRadius : 60,
         disableClusteringAtZoom : 10,
         showCoverageOnHover : true
       } );
@@ -318,8 +318,6 @@ Polymer( 'leaflet-marker-clustering-layer', {
 
   containerChanged : function () {
     if ( this.container ) {
-
-      // Cluster stuff here....
       this.control = L.control.clusters({}, {}, {});
       this.container.addControl( this.control );
 
@@ -328,13 +326,13 @@ Polymer( 'leaflet-marker-clustering-layer', {
       }, this);
 
       this.registerMapOnChildren();
-
     }
   },
 
   registerMapOnChildren: function() {
     for (var i = 0; i < this.children.length; i++) {
-      this.children[i].container = this.container;
+      //this.children[i].container = this.container;
+      this.children[i].container = this;
     }
     this.onMutation(this, this.registerMapOnChildren);
   },
@@ -349,7 +347,6 @@ Polymer( 'leaflet-marker-clustering-layer', {
     for ( var i = 0; i < this.children.length; i++ ) {
       if ( ( layer.url && layer.url.match( this.children[i].url ) ) ||
            ( layer._url && layer._url.match( this.children[i].url ) ) ) {
-        //this.container.addLayer( layer );
         this.control.addOverlay( layer, this.children[i].name );
       }
     }
