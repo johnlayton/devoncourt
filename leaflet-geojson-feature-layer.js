@@ -9,6 +9,10 @@ Polymer( 'leaflet-geojson-feature-layer', {
     'container' : 'containerChanged'
   },
 
+  publish : {
+    layer : null
+  },
+
   created : function () {
     console.log( 'created leaflet-geojson-feature-layer' );
   },

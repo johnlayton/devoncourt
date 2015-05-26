@@ -18,7 +18,7 @@
 
 @element leaflet-marker-clustering-layer
 -->
-<polymer-element name="leaflet-marker-clustering-layer" attributes="">
+<polymer-element name="leaflet-marker-clustering-layer" attributes="groupby">
 
   <template>
 
@@ -30,10 +30,16 @@
 */
     </style>
 
+    <content id="icon" selector="leaflet-marker-clustering-icon-template"></content>
+
   </template>
 
 
+<!--
+  <script src="../PruneCluster/dist/PruneCluster.js"></script>
+-->
   <script src="../leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+
   <script src="leaflet-marker-clustering-layer.js"></script>
 
 </polymer-element>

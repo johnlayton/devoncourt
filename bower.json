@@ -14,10 +14,14 @@
     "tests"
   ],
   "dependencies" : {
+    "kettstreet"            : "johnlayton/kettstreet",
+    "leighcourt"            : "johnlayton/leighcourt",
+    "astleystreet"          : "johnlayton/astleystreet",
     "polymer"               : ">=0.3.3",
     "leaflet"               : "~0.7.3",
     "leaflet-map"           : "~0.3.1",
     "moment"                : "~2.8.4",
+    "d3"                    : "~3.5.2",
     "d3"                    : "~3.5.2",
     "lodash"                : "~2.4.1",
     "paper-interval-slider" : "0.0.3",
@@ -31,9 +35,7 @@
     "paper-shadow"          : "polymer/paper-shadow",
     "paper-slider"          : "polymer/paper-slider",
     "paper-dropdown-menu"   : "polymer/paper-dropdown-menu",
-    "kettstreet"            : "johnlayton/kettstreet",
-    "leighcourt"            : "johnlayton/leighcourt",
-    "astleystreet"          : "johnlayton/astleystreet",
-    "leaflet.markercluster" : "0.4.0"
+    "leaflet.markercluster" : "0.4.0",
+    "PruneCluster"          : "1.1.0"
   }
 }

@@ -12,39 +12,69 @@
   }
 } ( this, function () {
 
+  L.HtmlIcon = L.Icon.extend({
+    options: {
+      iconSize: ['auto', 12], // also can be set through CSS
+      /*
+      iconAnchor: (Point)
+      popupAnchor: (Point)
+      html: (String)
+      bgPos: (Point)
+      */
+      className: 'leaflet-html-icon',
+      html: false
+    },
+
+    createIcon: function (oldIcon) {
+
+      var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
+          options = this.options;
+
+      if (!options.html) {
+        return;
+      }
+
+      if (typeof options.html === 'string') {
+        div.innerHTML = options.html;
+      } else {
+        while ( div.hasChildNodes() ) {
+          div.removeChild( div.firstChild );
+        }
+        div.appendChild( options.html );
+      }
+
+      if (options.bgPos) {
+        div.style.backgroundPosition =
+                (-options.bgPos.x) + 'px ' + (-options.bgPos.y) + 'px';
+      }
+
+      this._setIconStyles(div, 'icon');
+
+      return div;
+    },
+
+    createShadow: function () {
+      return null;
+    }
+  });
+
+  L.htmlIcon = function (options) {
+    return new L.HtmlIcon(options);
+  };
+
   L.Control.Clusters = L.Control.extend ( {
     options : {
       collapsed : true,
       position : 'topright',
       autoZIndex : true
-      //html : function ( cluster ) {
-      //  return cluster.getChildCount ()
-      //}
     },
 
     initialize : function ( baseLayers, overlays, options ) {
       L.setOptions ( this, options );
 
       var self = this;
-      this._clusters = L.markerClusterGroup ( {
-        maxClusterRadius : 60,
-        disableClusteringAtZoom : 10,
-        showCoverageOnHover : true
-      } );
-/*
-      this._clusters = L.markerClusterGroup ( {
-        iconCreateFunction : function ( cluster ) {
-          return L.divIcon ( {
-            html : self.options.html ( cluster ),
-            className : 'cluster-icon',
-            iconSize : L.point ( 90, 40 ) } );
-        },
-        maxClusterRadius : 120,
-        disableClusteringAtZoom : 10,
-        showCoverageOnHover : false
-      } );
+      this._clusters = L.markerClusterGroup ( options.clustering );
 
-*/
       this._layers = {};
       this._lastZIndex = 0;
       this._handlingClick = false;
@@ -228,11 +258,6 @@
         checked = obj.overlay ? this._clusters.hasLayer ( obj.layer.getLayers ()[0] ) :
                   this._map.hasLayer ( obj.layer );
 
-      //console.log ( " Checked ... " + checked );
-      //console.log ( " Overlay ... " + obj.overlay );
-      //console.log ( this._clusters.getLayers () );
-      //console.log ( obj.overlay ? obj.layer.getLayers () : obj.layer );
-
       if ( obj.overlay ) {
         input = document.createElement ( 'input' );
         input.type = 'checkbox';
@@ -318,7 +343,16 @@ Polymer( 'leaflet-marker-clustering-layer', {
 
   containerChanged : function () {
     if ( this.container ) {
-      this.control = L.control.clusters({}, {}, {});
+      var self = this;
+
+      this.control = L.control.clusters({}, {}, {
+        clustering : {
+          iconCreateFunction : self.iconHtml.bind( self ),
+          maxClusterRadius : 120,
+          disableClusteringAtZoom : 12,
+          showCoverageOnHover : true
+        }
+      } );
       this.container.addControl( this.control );
 
       this.container.on('layeradd', function( e ) {
@@ -343,10 +377,38 @@ Polymer( 'leaflet-marker-clustering-layer', {
     }
   },
 
+  domReady: function() {
+    //debugger;
+  },
+
+  iconHtml : function( cluster ) {
+
+    var popup = this.getElementsByTagName( 'leaflet-marker-clustering-icon-template' )[0];
+    var template = document.importNode( popup.children[0], true);
+
+    template.cluster = cluster.getAllChildMarkers().map( function( marker ) {
+      return marker.feature.properties;
+    } ).reduce(function( result, prop ) {
+      result[prop[this.groupby]] = [ ].concat( result[prop[this.groupby]], prop );
+      return result;
+    }.bind( this ), {} );
+
+    console.log( template.cluster );
+
+    var div = document.createElement('div');
+    div.appendChild( template );
+
+    return new L.HtmlIcon ( {
+      html      : div
+      //className : '',
+      //iconSize  : L.point ( 40, 40 )
+    } );
+  },
+
   addLayer: function( layer ) {
     for ( var i = 0; i < this.children.length; i++ ) {
-      if ( ( layer.url && layer.url.match( this.children[i].url ) ) ||
-           ( layer._url && layer._url.match( this.children[i].url ) ) ) {
+      if ( ( layer.url && this.children[i].url &&  layer.url.match( this.children[i].url ) ) ||
+           ( layer._url && this.children[i].url && layer._url.match( this.children[i].url ) ) ) {
         this.control.addOverlay( layer, this.children[i].name );
       }
     }

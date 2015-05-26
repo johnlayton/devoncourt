@@ -8,10 +8,6 @@ Polymer( 'leaflet-geojson-marker-template', {
 
   created : function () {
     console.log( 'created leaflet-geojson-marker-template' );
-  },
-
-  formatJson : function( value ) {
-    return JSON.stringify( value );
   }
 
 } );
