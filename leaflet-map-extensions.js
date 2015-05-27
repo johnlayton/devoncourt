@@ -63,10 +63,5 @@
 
 } ));
 
-
-
 Polymer( 'leaflet-map-extensions', {
-
-
-
 } );

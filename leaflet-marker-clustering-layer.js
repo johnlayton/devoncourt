@@ -327,15 +327,8 @@ Polymer( 'leaflet-marker-clustering-layer', {
     }
   },
 
-  domReady: function() {
-    //debugger;
-  },
-
   iconHtml : function( cluster ) {
-
-    var popup = this.getElementsByTagName( 'leaflet-marker-clustering-icon-template' )[0];
-    var template = document.importNode( popup.children[0], true);
-
+    var template = document.importNode( this.querySelector( "template#icon" ), true);
     template.cluster = cluster.getAllChildMarkers().map( function( marker ) {
       return marker.feature.properties;
     } ).reduce(function( result, prop ) {
@@ -345,14 +338,10 @@ Polymer( 'leaflet-marker-clustering-layer', {
       result[prop[this.groupby]] = result[prop[this.groupby]].concat( prop );
       return result;
     }.bind( this ), {} );
-
-    //console.log( template.cluster );
-
     var div = document.createElement('div');
     div.appendChild( template );
-
     return new L.HtmlIcon ( {
-      html      : div
+      html : div
       //className : '',
       //iconSize  : L.point ( 40, 40 )
     } );

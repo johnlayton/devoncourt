@@ -15,6 +15,7 @@ Polymer( 'leaflet-geojson-feature-layer', {
   },
 
   containerChanged : function () {
+
     if ( this.container && this.url ) {
 
       var icon = this.icon;
@@ -25,34 +26,41 @@ Polymer( 'leaflet-geojson-feature-layer', {
           this.layer = L.geoJson( data, {
             onEachFeature: function ( feature, layer )
             {
-              if ( feature.properties )
-              {
-                var popup = this.getElementsByTagName( 'leaflet-geojson-marker-template' )[0];
-                var template = document.importNode( popup.children[0], true);
-                //var template = document.importNode( popup, true);
-                //template.feature = feature;
-                template.properties = feature.properties;
-                var div = document.createElement('div');
-                div.appendChild( template );
-                layer.bindPopup( div );
-              }
+              var template = document.importNode( this.querySelector( "template#popup" ), true);
+              template.properties = feature.properties || {};
+              var div = document.createElement('div');
+              div.appendChild( template );
+              layer.bindPopup( div );
             }.bind( this ),
             pointToLayer: function ( feature, latlng )
             {
-              return L.marker( latlng, {
-                icon: L.icon( { iconUrl: icon, iconSize: size } )
-              } );
-            }
-          } );
+              if ( this.querySelector( "template#icon" ) ) {
+                var template = document.importNode( this.querySelector( "template#icon" ), true);
+                template.properties = feature.properties || {};
+                var div = document.createElement('div');
+                div.appendChild( template );
 
+                var icon = new L.HtmlIcon ( {
+                                              html : div
+                                              //className : '',
+                                              //iconSize  : L.point ( 40, 40 )
+                                            } );
+
+                return L.marker( latlng, {
+                  icon: icon //L.icon( { iconUrl: icon, iconSize: size } )
+                } );
+              } else {
+                return L.marker( latlng, {
+                  icon: L.icon( { iconUrl: icon, iconSize: size } )
+                } );
+              }
+            }.bind( this )
+          } );
           this.layer.url = this.url;
           this.container.addLayer( this.layer );
-
         }.bind( this )
       } );
-
       this.registerMapOnChildren();
-
     }
   },
 
