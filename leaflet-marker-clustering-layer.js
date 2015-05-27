@@ -389,7 +389,10 @@ Polymer( 'leaflet-marker-clustering-layer', {
     template.cluster = cluster.getAllChildMarkers().map( function( marker ) {
       return marker.feature.properties;
     } ).reduce(function( result, prop ) {
-      result[prop[this.groupby]] = [ ].concat( result[prop[this.groupby]], prop );
+      if ( !result[prop[this.groupby]] ) {
+        result[prop[this.groupby]] = [];
+      }
+      result[prop[this.groupby]] = result[prop[this.groupby]].concat( prop );
       return result;
     }.bind( this ), {} );
 

@@ -4,13 +4,10 @@ Polymer( 'leaflet-geojson-feature-layer', {
 
   icon     : "",
   size     : [25,25],
+  layer    : {},
 
   observe: {
     'container' : 'containerChanged'
-  },
-
-  publish : {
-    layer : null
   },
 
   created : function () {
