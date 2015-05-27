@@ -12,56 +12,6 @@
   }
 } ( this, function () {
 
-  L.HtmlIcon = L.Icon.extend({
-    options: {
-      iconSize: ['auto', 12], // also can be set through CSS
-      /*
-      iconAnchor: (Point)
-      popupAnchor: (Point)
-      html: (String)
-      bgPos: (Point)
-      */
-      className: 'leaflet-html-icon',
-      html: false
-    },
-
-    createIcon: function (oldIcon) {
-
-      var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
-          options = this.options;
-
-      if (!options.html) {
-        return;
-      }
-
-      if (typeof options.html === 'string') {
-        div.innerHTML = options.html;
-      } else {
-        while ( div.hasChildNodes() ) {
-          div.removeChild( div.firstChild );
-        }
-        div.appendChild( options.html );
-      }
-
-      if (options.bgPos) {
-        div.style.backgroundPosition =
-                (-options.bgPos.x) + 'px ' + (-options.bgPos.y) + 'px';
-      }
-
-      this._setIconStyles(div, 'icon');
-
-      return div;
-    },
-
-    createShadow: function () {
-      return null;
-    }
-  });
-
-  L.htmlIcon = function (options) {
-    return new L.HtmlIcon(options);
-  };
-
   L.Control.Clusters = L.Control.extend ( {
     options : {
       collapsed : true,
@@ -396,7 +346,7 @@ Polymer( 'leaflet-marker-clustering-layer', {
       return result;
     }.bind( this ), {} );
 
-    console.log( template.cluster );
+    //console.log( template.cluster );
 
     var div = document.createElement('div');
     div.appendChild( template );
