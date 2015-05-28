@@ -1,4 +1,4 @@
-"use strict";
+//"use strict";
 
 (function ( root, factory ) {
   if ( typeof exports === 'object' ) {
@@ -203,6 +203,8 @@
         gl.bindBuffer( gl.ARRAY_BUFFER, squareVertexColorBuffer );
         colors = [];
 
+        console.log( data );
+
         for ( var i = 0, len = data.length; i < len; i++ ) {
           var col = options.colour( data[i][2] );
           colors.push( col[0] / 255 );
@@ -211,6 +213,8 @@
           //colors.push( col[3] );
           colors.push( options.opacity || 0.5 );
         }
+
+        console.log( colors );
 
         gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
         squareVertexColorBuffer.itemSize = 4;
@@ -260,7 +264,6 @@
         this.options.min = options.min;
       }
       if ( options && options.theme ) {
-
         this.options.colour = options.theme.colour;
         //this.options.colour = options.theme ? options.theme.color : function ( i ) {
         //  var jet = [{"index" : 0,     "rgb" : [0, 0, 131]},

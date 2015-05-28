@@ -67,16 +67,11 @@
         </paper-dropdown>
       </paper-dropdown-menu>
 
-      <!--<content></content>-->
-      <!--<leaflet-theme-legend>-->
-        <!---->
-      <!--</leaflet-theme-legend>-->
     </div>
 
   </template>
 
   <script src="./webgl-themes.js"></script>
-  <!--<script src="./leaflet-themes-control.js"></script>-->
 
   <script>
     "user strict"
@@ -106,7 +101,9 @@
 //        this.theme = {
 //          colour : item.colour.bind( item )
 //        };
+//        item.colour.bind( item );
         this.theme = item;
+        this.theme.colour.bind( this.theme );
       },
 
       themeChanged : function() {
@@ -214,9 +211,6 @@
       },
 
       colour : function( i ) {
-
-//        debugger;
-
         var colour = _.find( this.children, function( child ) {
           return child.minimum <= i && child.maximum > i;
         } );

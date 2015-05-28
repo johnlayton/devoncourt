@@ -1,0 +1,55 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="leaflet-opendap-provider.html">
+
+<!--
+##### Example
+
+	<leaflet-opendap-chart-control kettstreet="..." variable="...">
+	</leaflet-opendap-chart-control>
+
+@element leaflet-opendap-chart
+-->
+<polymer-element name="leaflet-opendap-chart-control" attributes="kettstreet variable position height width">
+  <template>
+    <style>
+      div.inspect {
+        font: 10px sans-serif;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 10px;
+        border-style: solid;
+        border-color: #7b98bc;
+        padding: 2px;
+      }
+
+      div.inspect svg .axis path,
+      div.inspect svg .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+
+      div.inspect svg .data path {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1px;
+      }
+    </style>
+
+    <div id="chart" class="inspect"></div>
+
+  </template>
+
+  <script src="../lodash/dist/lodash.js"></script>
+  <script src="../d3/d3.js"></script>
+  <script src="../moment/moment.js"></script>
+
+
+  <script src="leaflet-opendap-chart-control.js"></script>
+
+</polymer-element>
+
+

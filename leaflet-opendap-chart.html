@@ -1,59 +1,35 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-ajax/core-ajax.html">
-<!--<link rel="import" href="../core-component-page/core-component-page.html">-->
-<link rel="import" href="../leaflet-map/leaflet-import.html">
+
+<link rel="import" href="leaflet-opendap-provider.html">
+<link rel="import" href="leaflet-opendap-chart-control.html">
 
 <!--
-
 ##### Example
 
-	<leaflet-opendap-chart url="..." variable="...">
+	<leaflet-opendap-chart kettstreet="..." variable="...">
 	</leaflet-opendap-chart>
 
-@element leaflet-opendap-control
+@element leaflet-opendap-chart
 -->
-<polymer-element name="leaflet-opendap-chart" attributes="url variable position height width">
+<polymer-element name="leaflet-opendap-chart" attributes="url variable">
   <template>
     <style>
-      div.inspect {
-        font: 10px sans-serif;
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: rgba(255, 255, 255, 0.4);
-        border-radius: 10px;
-        border-style: solid;
-        border-color: #7b98bc;
-        padding: 2px;
-      }
-
-      div.inspect svg .axis path,
-      div.inspect svg .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-      }
-
-      div.inspect svg .data path {
-        fill: none;
-        stroke: steelblue;
-        stroke-width: 1px;
-      }
+      /*
+        :host {
+          display: none;
+        }
+      */
     </style>
 
-    <core-xhr id="xhr"></core-xhr>
+    <leaflet-opendap-provider url="{{ url }}" kettstreet="{{ kettstreet }}">
+    </leaflet-opendap-provider>
 
-    <div id="chart" class="inspect"></div>
-
-    <web-storage storage="{{storage}}" group="OpenDap" resource="{{variable}}"></web-storage>
-
+    <leaflet-opendap-chart-control id="chart" variable="{{ variable }}" kettstreet="{{ kettstreet }}">
+    </leaflet-opendap-chart-control>
   </template>
-
-  <script src="../lodash/dist/lodash.js"></script>
-  <script src="../d3/d3.js"></script>
-  <script src="../moment/moment.js"></script>
-  <script src="../kettstreet/kettstreet.js"></script>
 
   <script src="leaflet-opendap-chart.js"></script>
 
 </polymer-element>
+
+

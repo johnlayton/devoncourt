@@ -1,6 +1,6 @@
 "use strict";
 
-Polymer( 'leaflet-opendap-control', {
+Polymer( 'leaflet-opendap-layer-control', {
 
 /*
   observe : {
